@@ -1,0 +1,557 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: chat
+    description: DEVIL Qwen chat orchestration
+  - name: missions
+    description: Autonomous mission execution
+  - name: dashboard
+    description: Mission control dashboard data
+  - name: architect
+    description: DEVIL Architect full-plan generation
+paths:
+  /chat:
+    post:
+      operationId: createChat
+      tags: [chat]
+      summary: Send a message to DEVIL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatInput"
+      responses:
+        "200":
+          description: DEVIL response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+        "500":
+          description: Chat provider failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [dashboard]
+      summary: Get mission control dashboard
+      responses:
+        "200":
+          description: Dashboard overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+  /activity:
+    get:
+      operationId: listActivity
+      tags: [dashboard]
+      summary: List recent agent activity
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Activity"
+  /missions:
+    post:
+      operationId: createMission
+      tags: [missions]
+      summary: Start an autonomous mission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MissionInput"
+      responses:
+        "201":
+          description: Mission created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Mission"
+    get:
+      operationId: listMissions
+      tags: [missions]
+      summary: List missions
+      responses:
+        "200":
+          description: Missions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Mission"
+  /missions/{id}:
+    get:
+      operationId: getMission
+      tags: [missions]
+      summary: Get a mission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Mission"
+        "404":
+          description: Mission not found
+  /architect:
+    post:
+      operationId: createArchitectPlan
+      tags: [architect]
+      summary: Generate a full DEVIL Architect plan for a goal
+      description: >
+        Runs mission analysis, requirements, user stories, database schema,
+        API design, frontend architecture, backend architecture, folder
+        structure, and implementation tasks for a single natural-language
+        goal, using the existing memory, planner, and AI layers.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArchitectPlanInput"
+      responses:
+        "201":
+          description: Architect plan generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArchitectPlan"
+        "502":
+          description: AI provider failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Architect plan generation failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    ChatInput:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+        conversationId:
+          type: ["string", "null"]
+        projectName:
+          type: ["string", "null"]
+      required: [message]
+    ChatResponse:
+      type: object
+      properties:
+        conversationId:
+          type: string
+        message:
+          type: string
+        model:
+          type: string
+        missionId:
+          type: ["string", "null"]
+        plan:
+          type: ["object", "null"]
+          additionalProperties: true
+      required: [conversationId, message, model, missionId, plan]
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    MissionInput:
+      type: object
+      properties:
+        goal:
+          type: string
+          minLength: 3
+      required:
+        - goal
+    MissionStep:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        status:
+          type: string
+          enum: [queued, active, complete]
+        detail:
+          type: string
+      required: [id, label, status, detail]
+    MissionOutcome:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum: [image, text]
+        title:
+          type: string
+        description:
+          type: string
+        assetUrl:
+          type: ["string", "null"]
+        ready:
+          type: boolean
+      required: [kind, title, description, assetUrl, ready]
+    Mission:
+      type: object
+      properties:
+        id:
+          type: string
+        goal:
+          type: string
+        status:
+          type: string
+          enum: [planning, executing, complete]
+        progress:
+          type: number
+        createdAt:
+          type: string
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/MissionStep"
+        outcome:
+          $ref: "#/components/schemas/MissionOutcome"
+      required: [id, goal, status, progress, createdAt, steps, outcome]
+    Activity:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [mission, code, image, video, system]
+        title:
+          type: string
+        detail:
+          type: string
+        timestamp:
+          type: string
+      required: [id, type, title, detail, timestamp]
+    Dashboard:
+      type: object
+      properties:
+        aiCore:
+          type: string
+          enum: [online, offline]
+        memory:
+          type: string
+          enum: [optimal, indexing, limited]
+        speed:
+          type: string
+        connections:
+          type: string
+          enum: [secure, warning]
+        devilMode:
+          type: boolean
+        uptime:
+          type: string
+        tasksCompleted:
+          type: number
+        filesProcessed:
+          type: string
+        thoughtsPerSecond:
+          type: string
+      required: [aiCore, memory, speed, connections, devilMode, uptime, tasksCompleted, filesProcessed, thoughtsPerSecond]
+    ArchitectPlanInput:
+      type: object
+      properties:
+        goal:
+          type: string
+          minLength: 3
+      required: [goal]
+    MissionAnalysis:
+      type: object
+      properties:
+        projectName:
+          type: string
+        requirements:
+          type: array
+          items:
+            type: string
+        architecture:
+          type: array
+          items:
+            type: string
+        databaseDesign:
+          type: array
+          items:
+            type: string
+      required: [projectName, requirements, architecture, databaseDesign]
+    UserStory:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+        goal:
+          type: string
+        benefit:
+          type: string
+        acceptanceCriteria:
+          type: array
+          items:
+            type: string
+      required: [id, role, goal, benefit, acceptanceCriteria]
+    DatabaseColumn:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        constraints:
+          type: array
+          items:
+            type: string
+      required: [name, type, constraints]
+    DatabaseTable:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        columns:
+          type: array
+          items:
+            $ref: "#/components/schemas/DatabaseColumn"
+        relations:
+          type: array
+          items:
+            type: string
+      required: [name, description, columns, relations]
+    DatabaseSchemaDesign:
+      type: object
+      properties:
+        tables:
+          type: array
+          items:
+            $ref: "#/components/schemas/DatabaseTable"
+        notes:
+          type: array
+          items:
+            type: string
+      required: [tables, notes]
+    ApiEndpoint:
+      type: object
+      properties:
+        method:
+          type: string
+          enum: [GET, POST, PUT, PATCH, DELETE]
+        path:
+          type: string
+        description:
+          type: string
+        requestBody:
+          type: string
+        response:
+          type: string
+        authRequired:
+          type: boolean
+      required: [method, path, description, requestBody, response, authRequired]
+    ApiDesign:
+      type: object
+      properties:
+        baseUrl:
+          type: string
+        authStrategy:
+          type: string
+        endpoints:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApiEndpoint"
+      required: [baseUrl, authStrategy, endpoints]
+    FrontendRoute:
+      type: object
+      properties:
+        path:
+          type: string
+        purpose:
+          type: string
+      required: [path, purpose]
+    FrontendArchitecture:
+      type: object
+      properties:
+        framework:
+          type: string
+        routes:
+          type: array
+          items:
+            $ref: "#/components/schemas/FrontendRoute"
+        keyComponents:
+          type: array
+          items:
+            type: string
+        stateManagement:
+          type: string
+        stylingApproach:
+          type: string
+      required: [framework, routes, keyComponents, stateManagement, stylingApproach]
+    BackendLayer:
+      type: object
+      properties:
+        name:
+          type: string
+        responsibility:
+          type: string
+      required: [name, responsibility]
+    BackendArchitecture:
+      type: object
+      properties:
+        framework:
+          type: string
+        layers:
+          type: array
+          items:
+            $ref: "#/components/schemas/BackendLayer"
+        services:
+          type: array
+          items:
+            type: string
+        integrations:
+          type: array
+          items:
+            type: string
+      required: [framework, layers, services, integrations]
+    FolderEntry:
+      type: object
+      properties:
+        path:
+          type: string
+        purpose:
+          type: string
+      required: [path, purpose]
+    FolderStructure:
+      type: object
+      properties:
+        tree:
+          type: string
+        explanation:
+          type: array
+          items:
+            $ref: "#/components/schemas/FolderEntry"
+      required: [tree, explanation]
+    ImplementationTask:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        category:
+          type: string
+          enum: [frontend, backend, database, deployment, general]
+        description:
+          type: string
+      required: [id, title, category, description]
+    ArchitectPlan:
+      type: object
+      properties:
+        missionId:
+          type: string
+        projectId:
+          type: string
+        projectName:
+          type: string
+        goal:
+          type: string
+        missionAnalysis:
+          $ref: "#/components/schemas/MissionAnalysis"
+        requirements:
+          type: array
+          items:
+            type: string
+        userStories:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserStory"
+        databaseSchema:
+          $ref: "#/components/schemas/DatabaseSchemaDesign"
+        apiDesign:
+          $ref: "#/components/schemas/ApiDesign"
+        frontendArchitecture:
+          $ref: "#/components/schemas/FrontendArchitecture"
+        backendArchitecture:
+          $ref: "#/components/schemas/BackendArchitecture"
+        folderStructure:
+          $ref: "#/components/schemas/FolderStructure"
+        implementationTasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/ImplementationTask"
+        memoryUsed:
+          type: boolean
+        createdAt:
+          type: string
+      required:
+        - missionId
+        - projectId
+        - projectName
+        - goal
+        - missionAnalysis
+        - requirements
+        - userStories
+        - databaseSchema
+        - apiDesign
+        - frontendArchitecture
+        - backendArchitecture
+        - folderStructure
+        - implementationTasks
+        - memoryUsed
+        - createdAt
+
