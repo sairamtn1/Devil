@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 4.0.0
+  version: 5.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -9,6 +9,7 @@ info:
     Phase 2: Executor Foundation - Execution Engine, Sandbox, Recovery, Dry Run, Step-by-Step, Auto Pilot
     Phase 3: Coding Agent Foundation - Workspace Manager, Code Generator, Build/Test/Lint Runners, Diff Engine, Code Review
     Phase 4: GitHub Agent - Repository Analyzer, Branch Manager, Commit Manager, PR Manager, Audit Trail
+    Phase 5: Deployment Agent - Deployment Manager, Providers, Health System, Rollback Engine, Validation Pipeline
   contact:
     name: DEVIL Team
 servers:
@@ -45,6 +46,8 @@ tags:
     description: Code review and diff
   - name: github
     description: GitHub agent operations
+  - name: deployment
+    description: Deployment agent operations
 paths:
   /healthz:
     get:
@@ -1210,6 +1213,243 @@ paths:
       responses:
         "200":
           description: History
+  # Phase 5: Deployment Agent Paths
+  /deployments:
+    get:
+      operationId: listDeployments
+      tags: [deployment]
+      summary: List deployments
+      responses:
+        "200":
+          description: Deployment list
+    post:
+      operationId: createDeployment
+      tags: [deployment]
+      summary: Create a new deployment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeploymentCreate"
+      responses:
+        "201":
+          description: Deployment created
+  /deployments/:id:
+    get:
+      operationId: getDeployment
+      tags: [deployment]
+      summary: Get deployment details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deployment details
+    delete:
+      operationId: deleteDeployment
+      tags: [deployment]
+      summary: Delete deployment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+  /deployments/:id/artifact:
+    post:
+      operationId: createArtifact
+      tags: [deployment]
+      summary: Create deployment artifact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workspacePath:
+                  type: string
+      responses:
+        "201":
+          description: Artifact created
+  /deployments/:id/validate:
+    post:
+      operationId: validateDeployment
+      tags: [deployment]
+      summary: Validate deployment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workspacePath:
+                  type: string
+      responses:
+        "200":
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResult"
+  /deployments/:id/start:
+    post:
+      operationId: startDeployment
+      tags: [deployment]
+      summary: Start deployment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deployment started
+  /deployments/:id/approve:
+    post:
+      operationId: approveDeployment
+      tags: [deployment]
+      summary: Approve deployment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Approved
+  /deployments/:id/reject:
+    post:
+      operationId: rejectDeployment
+      tags: [deployment]
+      summary: Reject deployment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Rejected
+  /deployments/:id/cancel:
+    post:
+      operationId: cancelDeployment
+      tags: [deployment]
+      summary: Cancel deployment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cancelled
+  /deployments/:id/rollback:
+    post:
+      operationId: rollbackDeployment
+      tags: [deployment]
+      summary: Rollback deployment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Rolled back
+  /deployments/:id/health:
+    get:
+      operationId: healthCheck
+      tags: [deployment]
+      summary: Get deployment health
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthCheck"
+  /deployments/:id/health/history:
+    get:
+      operationId: healthHistory
+      tags: [deployment]
+      summary: Get health check history
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Health history
+  /deployments/:id/events:
+    get:
+      operationId: getDeploymentEvents
+      tags: [deployment]
+      summary: Get deployment events
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Event list
+  /deployments/:id/rollback-points:
+    get:
+      operationId: getRollbackPoints
+      tags: [deployment]
+      summary: Get rollback points
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Rollback points
+  /deployments/providers:
+    get:
+      operationId: getProviders
+      tags: [deployment]
+      summary: Get available providers
+      responses:
+        "200":
+          description: Provider list
 components:
   schemas:
     HealthStatus:
@@ -2276,6 +2516,145 @@ components:
         details:
           type: object
         actor:
+          type: string
+        timestamp:
+          type: string
+    # Phase 5 Deployment Schemas
+    DeploymentState:
+      type: string
+      enum: [NOT_DEPLOYED, PREPARING, VALIDATING, BUILDING, PACKAGING, READY, AWAITING_APPROVAL, DEPLOYING, VERIFYING, HEALTH_CHECKING, ACTIVE, ROLLING_BACK, ROLLED_BACK, FAILED, CANCELLED]
+    HealthState:
+      type: string
+      enum: [HEALTHY, DEGRADED, UNHEALTHY, UNKNOWN]
+    DeploymentTarget:
+      type: string
+      enum: [local, docker, vercel, railway]
+    ProjectType:
+      type: string
+      enum: [react, nextjs, node, express, fastapi, python]
+    Deployment:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        workspaceId:
+          type: string
+        provider:
+          $ref: "#/components/schemas/DeploymentTarget"
+        state:
+          $ref: "#/components/schemas/DeploymentState"
+        health:
+          $ref: "#/components/schemas/HealthState"
+        environment:
+          type: string
+          enum: [development, staging, production]
+        projectType:
+          $ref: "#/components/schemas/ProjectType"
+        version:
+          type: string
+        url:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    DeploymentCreate:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        name:
+          type: string
+        provider:
+          $ref: "#/components/schemas/DeploymentTarget"
+        projectType:
+          $ref: "#/components/schemas/ProjectType"
+        environment:
+          type: string
+          enum: [development, staging, production]
+      required: [workspaceId, name, provider, projectType]
+    DeploymentArtifact:
+      type: object
+      properties:
+        id:
+          type: string
+        deploymentId:
+          type: string
+        path:
+          type: string
+        size:
+          type: number
+        checksum:
+          type: string
+        createdAt:
+          type: string
+    ValidationResult:
+      type: object
+      properties:
+        passed:
+          type: boolean
+        checks:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationCheck"
+        errors:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+    ValidationCheck:
+      type: object
+      properties:
+        name:
+          type: string
+        passed:
+          type: boolean
+        message:
+          type: string
+    HealthCheck:
+      type: object
+      properties:
+        id:
+          type: string
+        deploymentId:
+          type: string
+        status:
+          $ref: "#/components/schemas/HealthState"
+        responseTime:
+          type: number
+        checkedAt:
+          type: string
+    RollbackPoint:
+      type: object
+      properties:
+        id:
+          type: string
+        deploymentId:
+          type: string
+        snapshotPath:
+          type: string
+        createdAt:
+          type: string
+        reason:
+          type: string
+    DeploymentEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        deploymentId:
+          type: string
+        type:
+          type: string
+        severity:
+          type: string
+          enum: [info, warning, error, critical]
+        message:
           type: string
         timestamp:
           type: string
