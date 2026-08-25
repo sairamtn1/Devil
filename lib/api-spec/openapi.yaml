@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 7.0.0
+  version: 8.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -12,6 +12,7 @@ info:
     Phase 5: Deployment Agent - Deployment Manager, Providers, Health System, Rollback Engine, Validation Pipeline
     Phase 6: Memory System - User/Project/Mission/Repository/Execution/Knowledge Memory, Retrieval, Search
     Phase 7: Architect 2.0 - Goal Analysis, Complexity Engine, Risk Engine, Timeline Engine, Stack Recommendation, Adaptive Planner
+    Phase 8: Orchestrator - Agent Registry, Mission Router, Task Dispatcher, Dependency Coordinator, Workflow Engine, GOD/DEVIL Modes
   contact:
     name: DEVIL Team
 servers:
@@ -52,6 +53,8 @@ tags:
     description: Deployment agent operations
   - name: memory
     description: Memory and knowledge system
+  - name: orchestrator
+    description: Multi-agent orchestration system
 paths:
   /healthz:
     get:
@@ -1677,6 +1680,212 @@ paths:
       operationId: getArchitectEvents
       tags: [architect]
       summary: Get architect events
+      responses:
+        "200":
+          description: Events
+  # Phase 8: Orchestrator Paths
+  /orchestrator/agents:
+    get:
+      operationId: listAgents
+      tags: [orchestrator]
+      summary: List all agents
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Agent list
+    post:
+      operationId: registerAgent
+      tags: [orchestrator]
+      summary: Register a new agent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AgentRegistration"
+      responses:
+        "201":
+          description: Agent registered
+  /orchestrator/agents/:id:
+    get:
+      operationId: getAgent
+      tags: [orchestrator]
+      summary: Get agent by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Agent details
+    delete:
+      operationId: unregisterAgent
+      tags: [orchestrator]
+      summary: Unregister agent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Agent unregistered
+  /orchestrator/start:
+    post:
+      operationId: startMission
+      tags: [orchestrator]
+      summary: Start a new mission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goal:
+                  type: string
+                mode:
+                  type: string
+                  enum: [GOD, DEVIL]
+                userId:
+                  type: string
+                roadmapId:
+                  type: string
+              required: [goal]
+      responses:
+        "201":
+          description: Mission started
+  /orchestrator/missions:
+    get:
+      operationId: listMissions
+      tags: [orchestrator]
+      summary: List all missions
+      parameters:
+        - name: state
+          in: query
+          schema:
+            type: string
+        - name: mode
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission list
+  /orchestrator/mission/:id:
+    get:
+      operationId: getMission
+      tags: [orchestrator]
+      summary: Get mission by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission details
+  /orchestrator/pause/:id:
+    post:
+      operationId: pauseMission
+      tags: [orchestrator]
+      summary: Pause a mission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission paused
+  /orchestrator/resume/:id:
+    post:
+      operationId: resumeMission
+      tags: [orchestrator]
+      summary: Resume a paused mission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission resumed
+  /orchestrator/cancel/:id:
+    post:
+      operationId: cancelMission
+      tags: [orchestrator]
+      summary: Cancel a mission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission cancelled
+  /orchestrator/workflows:
+    get:
+      operationId: listWorkflows
+      tags: [orchestrator]
+      summary: List all workflows
+      responses:
+        "200":
+          description: Workflow list
+  /orchestrator/mode:
+    get:
+      operationId: getMode
+      tags: [orchestrator]
+      summary: Get orchestration mode
+      responses:
+        "200":
+          description: Current mode
+    post:
+      operationId: setMode
+      tags: [orchestrator]
+      summary: Set orchestration mode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mode:
+                  type: string
+                  enum: [GOD, DEVIL]
+              required: [mode]
+      responses:
+        "200":
+          description: Mode updated
+  /orchestrator/stats:
+    get:
+      operationId: getOrchestratorStats
+      tags: [orchestrator]
+      summary: Get orchestrator statistics
+      responses:
+        "200":
+          description: Statistics
+  /orchestrator/events:
+    get:
+      operationId: getOrchestratorEvents
+      tags: [orchestrator]
+      summary: Get orchestrator events
       responses:
         "200":
           description: Events

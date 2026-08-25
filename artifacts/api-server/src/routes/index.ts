@@ -13,6 +13,7 @@ import codingRouter from "./coding";
 import githubRouter from "./github";
 import deploymentRouter from "./deployment";
 import memoryRouter from "./memory";
+import orchestratorRouter from "./orchestrator";
 
 const router: IRouter = Router();
 
@@ -22,6 +23,9 @@ router.use(aiRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);
+
+// Orchestrator Routes
+router.use(orchestratorRouter);
 
 // Control Plane Routes
 router.use(eventsRouter);
