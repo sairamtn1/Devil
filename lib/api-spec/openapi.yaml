@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 5.0.0
+  version: 6.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -10,6 +10,7 @@ info:
     Phase 3: Coding Agent Foundation - Workspace Manager, Code Generator, Build/Test/Lint Runners, Diff Engine, Code Review
     Phase 4: GitHub Agent - Repository Analyzer, Branch Manager, Commit Manager, PR Manager, Audit Trail
     Phase 5: Deployment Agent - Deployment Manager, Providers, Health System, Rollback Engine, Validation Pipeline
+    Phase 6: Memory System - User/Project/Mission/Repository/Execution/Knowledge Memory, Retrieval, Search
   contact:
     name: DEVIL Team
 servers:
@@ -48,6 +49,8 @@ tags:
     description: GitHub agent operations
   - name: deployment
     description: Deployment agent operations
+  - name: memory
+    description: Memory and knowledge system
 paths:
   /healthz:
     get:
@@ -1450,6 +1453,226 @@ paths:
       responses:
         "200":
           description: Provider list
+  # Phase 6: Memory System Paths
+  /memory:
+    get:
+      operationId: listMemories
+      tags: [memory]
+      summary: List and search memories
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [user, project, mission, repository, execution, knowledge]
+        - name: entityId
+          in: query
+          schema:
+            type: string
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: number
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: number
+            default: 0
+      responses:
+        "200":
+          description: Memory list
+    post:
+      operationId: createMemory
+      tags: [memory]
+      summary: Create a new memory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemoryCreate"
+      responses:
+        "201":
+          description: Memory created
+  /memory/search:
+    post:
+      operationId: searchMemories
+      tags: [memory]
+      summary: Search memories
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemorySearchQuery"
+      responses:
+        "200":
+          description: Search results
+  /memory/:id:
+    get:
+      operationId: getMemory
+      tags: [memory]
+      summary: Get memory by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Memory details
+    put:
+      operationId: updateMemory
+      tags: [memory]
+      summary: Update memory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Updated memory
+    delete:
+      operationId: deleteMemory
+      tags: [memory]
+      summary: Delete memory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+  /memory/:id/archive:
+    post:
+      operationId: archiveMemory
+      tags: [memory]
+      summary: Archive memory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Archived
+  /memory/user/:userId:
+    get:
+      operationId: getUserMemory
+      tags: [memory]
+      summary: Get user memory
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User memory
+  /memory/project/:projectId:
+    get:
+      operationId: getProjectMemory
+      tags: [memory]
+      summary: Get project memory
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project memory
+  /memory/mission/:missionId:
+    get:
+      operationId: getMissionMemory
+      tags: [memory]
+      summary: Get mission memory
+      parameters:
+        - name: missionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission memory
+  /memory/repository/:repositoryId:
+    get:
+      operationId: getRepositoryMemory
+      tags: [memory]
+      summary: Get repository memory
+      parameters:
+        - name: repositoryId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Repository memory
+  /memory/knowledge:
+    post:
+      operationId: addKnowledge
+      tags: [memory]
+      summary: Add knowledge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                title:
+                  type: string
+                content:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                importance:
+                  type: number
+              required: [category, title, content]
+      responses:
+        "201":
+          description: Knowledge added
+  /memory/stats:
+    get:
+      operationId: getMemoryStats
+      tags: [memory]
+      summary: Get memory statistics
+      responses:
+        "200":
+          description: Statistics
+  /memory/events:
+    get:
+      operationId: getMemoryEvents
+      tags: [memory]
+      summary: Get memory events
+      responses:
+        "200":
+          description: Events
 components:
   schemas:
     HealthStatus:
@@ -2658,6 +2881,223 @@ components:
           type: string
         timestamp:
           type: string
+    # Phase 6 Memory Schemas
+    MemoryState:
+      type: string
+      enum: [ACTIVE, ARCHIVED, EXPIRED, DELETED]
+    MemoryType:
+      type: string
+      enum: [user, project, mission, repository, execution, knowledge]
+    MemoryEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          $ref: "#/components/schemas/MemoryType"
+        entityId:
+          type: string
+        state:
+          $ref: "#/components/schemas/MemoryState"
+        data:
+          type: object
+        importance:
+          type: number
+        confidence:
+          type: number
+        tags:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    MemoryCreate:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/MemoryType"
+        entityId:
+          type: string
+        data:
+          type: object
+        importance:
+          type: number
+        confidence:
+          type: number
+        tags:
+          type: array
+          items:
+            type: string
+      required: [type, entityId, data]
+    MemorySearchQuery:
+      type: object
+      properties:
+        query:
+          type: string
+        type:
+          $ref: "#/components/schemas/MemoryType"
+        entityId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        state:
+          $ref: "#/components/schemas/MemoryState"
+        minImportance:
+          type: number
+        minConfidence:
+          type: number
+        since:
+          type: string
+          format: date-time
+        limit:
+          type: number
+        offset:
+          type: number
+    MemorySearchResult:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/MemoryEntry"
+        total:
+          type: number
+        scores:
+          type: object
+          additionalProperties:
+            type: number
+    UserMemory:
+      type: object
+      properties:
+        userId:
+          type: string
+        preferences:
+          type: object
+        approvedStacks:
+          type: array
+          items:
+            type: string
+        codingStyle:
+          type: object
+        deploymentPreferences:
+          type: object
+        toolPermissions:
+          type: object
+          additionalProperties:
+            type: boolean
+    ProjectMemory:
+      type: object
+      properties:
+        projectId:
+          type: string
+        name:
+          type: string
+        goals:
+          type: array
+          items:
+            type: string
+        frameworks:
+          type: array
+          items:
+            type: string
+        databases:
+          type: array
+          items:
+            type: string
+        deploymentHistory:
+          type: array
+          items:
+            type: object
+    MissionMemory:
+      type: object
+      properties:
+        missionId:
+          type: string
+        objective:
+          type: string
+        phases:
+          type: array
+          items:
+            type: object
+        status:
+          type: string
+        approvals:
+          type: array
+          items:
+            type: object
+    RepositoryMemory:
+      type: object
+      properties:
+        repositoryId:
+          type: string
+        url:
+          type: string
+        structure:
+          type: object
+        importantFiles:
+          type: array
+          items:
+            type: object
+    ExecutionMemory:
+      type: object
+      properties:
+        executionId:
+          type: string
+        taskHistory:
+          type: array
+          items:
+            type: object
+        toolCalls:
+          type: array
+          items:
+            type: object
+    KnowledgeMemory:
+      type: object
+      properties:
+        knowledgeId:
+          type: string
+        category:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        examples:
+          type: array
+          items:
+            type: string
+    MemoryEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        memoryId:
+          type: string
+        memoryType:
+          $ref: "#/components/schemas/MemoryType"
+        entityId:
+          type: string
+        timestamp:
+          type: string
+    MemoryStats:
+      type: object
+      properties:
+        total:
+          type: number
+        byType:
+          type: object
+          additionalProperties:
+            type: number
+        byState:
+          type: object
+          additionalProperties:
+            type: number
     ErrorResponse:
       type: object
       properties:

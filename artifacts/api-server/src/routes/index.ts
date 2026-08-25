@@ -12,6 +12,7 @@ import executorRouter from "./executor";
 import codingRouter from "./coding";
 import githubRouter from "./github";
 import deploymentRouter from "./deployment";
+import memoryRouter from "./memory";
 
 const router: IRouter = Router();
 
@@ -38,5 +39,8 @@ router.use(githubRouter);
 
 // Deployment Agent Routes
 router.use(deploymentRouter);
+
+// Memory System Routes
+router.use(memoryRouter);
 
 export default router;
