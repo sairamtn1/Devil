@@ -1,13 +1,14 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 3.0.0
+  version: 4.0.0
   description: |
     DEVIL AI Agent Platform API
     
     Phase 1: Control Plane - Mission State Machine, Event Log, Approval Engine, Validation Layer, Tool Registry
     Phase 2: Executor Foundation - Execution Engine, Sandbox, Recovery, Dry Run, Step-by-Step, Auto Pilot
     Phase 3: Coding Agent Foundation - Workspace Manager, Code Generator, Build/Test/Lint Runners, Diff Engine, Code Review
+    Phase 4: GitHub Agent - Repository Analyzer, Branch Manager, Commit Manager, PR Manager, Audit Trail
   contact:
     name: DEVIL Team
 servers:
@@ -42,6 +43,8 @@ tags:
     description: Build and test runners
   - name: review
     description: Code review and diff
+  - name: github
+    description: GitHub agent operations
 paths:
   /healthz:
     get:
@@ -944,6 +947,269 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/WorkspaceDiff"
+  # Phase 4: GitHub Agent Paths
+  /github/clone:
+    post:
+      operationId: cloneRepository
+      tags: [github]
+      summary: Clone a GitHub repository
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                branch:
+                  type: string
+              required: [url]
+      responses:
+        "201":
+          description: Repository cloned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Repository"
+  /github/repositories:
+    get:
+      operationId: listRepositories
+      tags: [github]
+      summary: List cloned repositories
+      responses:
+        "200":
+          description: Repository list
+  /github/repositories/{id}:
+    get:
+      operationId: getRepository
+      tags: [github]
+      summary: Get repository details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Repository details
+  /github/repositories/{id}/fetch:
+    post:
+      operationId: fetchRepository
+      tags: [github]
+      summary: Fetch repository updates
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Fetched
+  /github/analyze/{id}:
+    post:
+      operationId: analyzeRepository
+      tags: [github]
+      summary: Analyze repository
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Analysis results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RepositoryAnalysis"
+  /github/repositories/{id}/branches:
+    get:
+      operationId: listBranches
+      tags: [github]
+      summary: List repository branches
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Branch list
+    post:
+      operationId: createBranch
+      tags: [github]
+      summary: Create a new branch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                baseBranch:
+                  type: string
+              required: [name]
+      responses:
+        "201":
+          description: Branch created
+  /github/repositories/{id}/checkout:
+    post:
+      operationId: checkoutBranch
+      tags: [github]
+      summary: Checkout a branch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                branch:
+                  type: string
+              required: [branch]
+      responses:
+        "200":
+          description: Checked out
+  /github/repositories/{id}/commits:
+    get:
+      operationId: getCommitHistory
+      tags: [github]
+      summary: Get commit history
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: number
+            default: 50
+      responses:
+        "200":
+          description: Commit list
+  /github/commit/message:
+    post:
+      operationId: generateCommitMessage
+      tags: [github]
+      summary: Generate commit message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                diff:
+                  type: string
+              required: [files]
+      responses:
+        "200":
+          description: Generated message
+  /github/repositories/{id}/commit:
+    post:
+      operationId: createCommit
+      tags: [github]
+      summary: Create a commit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                files:
+                  type: array
+                  items:
+                    type: string
+              required: [message, files]
+      responses:
+        "200":
+          description: Commit created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommitResult"
+  /github/repositories/{id}/pr:
+    post:
+      operationId: createPullRequest
+      tags: [github]
+      summary: Create a pull request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                sourceBranch:
+                  type: string
+                targetBranch:
+                  type: string
+                draft:
+                  type: boolean
+              required: [title, sourceBranch, targetBranch]
+      responses:
+        "201":
+          description: PR created
+  /github/audit:
+    get:
+      operationId: getAuditLog
+      tags: [github]
+      summary: Get audit log
+      responses:
+        "200":
+          description: Audit entries
+  /github/history:
+    get:
+      operationId: getGitHubHistory
+      tags: [github]
+      summary: Get full GitHub history
+      responses:
+        "200":
+          description: History
 components:
   schemas:
     HealthStatus:
@@ -1862,6 +2128,157 @@ components:
             type: string
         duration:
           type: number
+    # Phase 4 GitHub Agent Schemas
+    Repository:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        owner:
+          type: string
+        url:
+          type: string
+        localPath:
+          type: string
+        defaultBranch:
+          type: string
+        isPrivate:
+          type: boolean
+        lastAnalyzed:
+          type: string
+    RepositoryAnalysis:
+      type: object
+      properties:
+        repository:
+          $ref: "#/components/schemas/Repository"
+        languages:
+          type: array
+          items:
+            $ref: "#/components/schemas/LanguageInfo"
+        frameworks:
+          type: array
+          items:
+            type: string
+        packageManagers:
+          type: array
+          items:
+            type: string
+        buildSystems:
+          type: array
+          items:
+            type: string
+        testSystems:
+          type: array
+          items:
+            type: string
+        hasDockerfile:
+          type: boolean
+        hasCI:
+          type: boolean
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+        risks:
+          type: array
+          items:
+            $ref: "#/components/schemas/RiskItem"
+        suggestions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Suggestion"
+        summary:
+          type: string
+        analyzedAt:
+          type: string
+    LanguageInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        percentage:
+          type: number
+        files:
+          type: number
+    RiskItem:
+      type: object
+      properties:
+        category:
+          type: string
+        severity:
+          type: string
+          enum: [low, medium, high]
+        description:
+          type: string
+        recommendation:
+          type: string
+    Suggestion:
+      type: object
+      properties:
+        category:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high]
+    Branch:
+      type: object
+      properties:
+        name:
+          type: string
+        isProtected:
+          type: boolean
+        isDefault:
+          type: boolean
+    Commit:
+      type: object
+      properties:
+        hash:
+          type: string
+        message:
+          type: string
+        author:
+          type: string
+        authorEmail:
+          type: string
+        date:
+          type: string
+    CommitResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        hash:
+          type: string
+        message:
+          type: string
+        files:
+          type: array
+          items:
+            type: string
+        riskScore:
+          type: number
+        error:
+          type: string
+    AuditEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        action:
+          type: string
+        repository:
+          type: string
+        details:
+          type: object
+        actor:
+          type: string
+        timestamp:
+          type: string
     ErrorResponse:
       type: object
       properties:

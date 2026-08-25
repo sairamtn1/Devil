@@ -10,6 +10,7 @@ import toolsRouter from "./tools";
 import controlPlaneRouter from "./control-plane-router";
 import executorRouter from "./executor";
 import codingRouter from "./coding";
+import githubRouter from "./github";
 
 const router: IRouter = Router();
 
@@ -30,5 +31,8 @@ router.use(executorRouter);
 
 // Coding Agent Routes
 router.use(codingRouter);
+
+// GitHub Agent Routes
+router.use(githubRouter);
 
 export default router;
