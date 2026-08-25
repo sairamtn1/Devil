@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 6.0.0
+  version: 7.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -11,6 +11,7 @@ info:
     Phase 4: GitHub Agent - Repository Analyzer, Branch Manager, Commit Manager, PR Manager, Audit Trail
     Phase 5: Deployment Agent - Deployment Manager, Providers, Health System, Rollback Engine, Validation Pipeline
     Phase 6: Memory System - User/Project/Mission/Repository/Execution/Knowledge Memory, Retrieval, Search
+    Phase 7: Architect 2.0 - Goal Analysis, Complexity Engine, Risk Engine, Timeline Engine, Stack Recommendation, Adaptive Planner
   contact:
     name: DEVIL Team
 servers:
@@ -34,7 +35,7 @@ tags:
   - name: executor
     description: Mission execution engine
   - name: architect
-    description: DEVIL Architect full-plan generation
+    description: DEVIL Architect Intelligence Engine
   - name: workspace
     description: Workspace management
   - name: files
@@ -1453,6 +1454,232 @@ paths:
       responses:
         "200":
           description: Provider list
+  # Phase 7: Architect 2.0 Paths
+  /architect/analyze:
+    post:
+      operationId: analyzeGoal
+      tags: [architect]
+      summary: Analyze a goal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goal:
+                  type: string
+                repositoryUrl:
+                  type: string
+                projectId:
+                  type: string
+              required: [goal]
+      responses:
+        "200":
+          description: Goal analysis
+  /architect/roadmap:
+    post:
+      operationId: generateRoadmap
+      tags: [architect]
+      summary: Generate intelligent roadmap
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goal:
+                  type: string
+                missionId:
+                  type: string
+                repositoryUrl:
+                  type: string
+                userPreferences:
+                  type: object
+                projectId:
+                  type: string
+              required: [goal]
+      responses:
+        "201":
+          description: Generated roadmap
+    get:
+      operationId: listRoadmaps
+      tags: [architect]
+      summary: List all roadmaps
+      responses:
+        "200":
+          description: Roadmap list
+  /architect/roadmap/:id:
+    get:
+      operationId: getRoadmap
+      tags: [architect]
+      summary: Get roadmap by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Roadmap details
+  /architect/replan:
+    post:
+      operationId: replan
+      tags: [architect]
+      summary: Replan after failure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roadmapId:
+                  type: string
+                failedTaskId:
+                  type: string
+                reason:
+                  type: string
+              required: [roadmapId, failedTaskId]
+      responses:
+        "200":
+          description: Updated roadmap
+  /architect/mission/:missionId:
+    get:
+      operationId: getMissionRoadmap
+      tags: [architect]
+      summary: Get roadmap for mission
+      parameters:
+        - name: missionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Roadmap
+  /architect/risks/:id:
+    get:
+      operationId: getRoadmapRisks
+      tags: [architect]
+      summary: Get risks for roadmap
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Risk analysis
+  /architect/timeline/:id:
+    get:
+      operationId: getRoadmapTimeline
+      tags: [architect]
+      summary: Get timeline for roadmap
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Timeline prediction
+  /architect/complexity/:id:
+    get:
+      operationId: getRoadmapComplexity
+      tags: [architect]
+      summary: Get complexity for roadmap
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Complexity analysis
+  /architect/stack/:id:
+    get:
+      operationId: getRoadmapStack
+      tags: [architect]
+      summary: Get stack recommendation for roadmap
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Stack recommendation
+  /architect/stack/recommend:
+    post:
+      operationId: recommendStack
+      tags: [architect]
+      summary: Recommend technology stack
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goal:
+                  type: string
+                userPreferences:
+                  type: object
+                existingStack:
+                  type: array
+                  items:
+                    type: string
+              required: [goal]
+      responses:
+        "200":
+          description: Stack recommendation
+  /architect/learn:
+    post:
+      operationId: learnFromMission
+      tags: [architect]
+      summary: Record mission results for learning
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId:
+                  type: string
+                plannedDuration:
+                  type: number
+                actualDuration:
+                  type: number
+                plannedComplexity:
+                  type: string
+                actualComplexity:
+                  type: string
+                risksOccurred:
+                  type: array
+                  items:
+                    type: string
+                recoveriesSuccessful:
+                  type: boolean
+              required: [missionId]
+      responses:
+        "200":
+          description: Learning results
+  /architect/events:
+    get:
+      operationId: getArchitectEvents
+      tags: [architect]
+      summary: Get architect events
+      responses:
+        "200":
+          description: Events
   # Phase 6: Memory System Paths
   /memory:
     get:

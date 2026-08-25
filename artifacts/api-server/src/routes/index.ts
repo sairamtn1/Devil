@@ -2,7 +2,7 @@ import { Router, type IRouter } from "express";
 import healthRouter from "./health";
 import missionsRouter from "./missions";
 import aiRouter from "../server/ai/router";
-import architectRouter from "../server/architect/router";
+import architectRouter from "./architect";
 import eventsRouter from "./events";
 import approvalsRouter from "./approvals";
 import validationRouter from "./validation";
@@ -19,6 +19,8 @@ const router: IRouter = Router();
 router.use(healthRouter);
 router.use(missionsRouter);
 router.use(aiRouter);
+
+// Architect 2.0 Routes
 router.use(architectRouter);
 
 // Control Plane Routes
