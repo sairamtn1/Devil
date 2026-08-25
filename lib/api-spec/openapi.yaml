@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 9.0.0
+  version: 10.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -14,6 +14,7 @@ info:
     Phase 7: Architect 2.0 - Goal Analysis, Complexity Engine, Risk Engine, Timeline Engine, Stack Recommendation, Adaptive Planner
     Phase 8: Orchestrator - Agent Registry, Mission Router, Task Dispatcher, Dependency Coordinator, Workflow Engine, GOD/DEVIL Modes
     Phase 9: Image Studio - Image Generation, Logo Design, Brand System, Asset Library, Provider Abstraction
+    Phase 10: Video Studio - Video Generation, Storyboard Engine, Commercial Templates, Provider Abstraction
   contact:
     name: DEVIL Team
 servers:
@@ -58,6 +59,8 @@ tags:
     description: Multi-agent orchestration system
   - name: image
     description: Image Studio - generation and asset management
+  - name: video
+    description: Video Studio - generation and asset management
 paths:
   /healthz:
     get:
@@ -2113,6 +2116,259 @@ paths:
       operationId: getImageStats
       tags: [image]
       summary: Get image statistics
+      responses:
+        "200":
+          description: Statistics
+  # Phase 10: Video Studio Paths
+  /video/generate:
+    post:
+      operationId: generateVideo
+      tags: [video]
+      summary: Generate a video
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt:
+                  type: string
+                type:
+                  type: string
+                  enum: [commercial, product_reveal, logo_intro, os_intro, feature_showcase, social_media_short, trailer, launch_film, ui_demo, explainer]
+                provider:
+                  type: string
+                  enum: [google_veo, kling, runway]
+                brandId:
+                  type: string
+                duration:
+                  type: integer
+                aspectRatio:
+                  type: string
+                  enum: ["16:9", "9:16", "1:1", "21:9"]
+                style:
+                  type: string
+              required: [prompt, type]
+      responses:
+        "201":
+          description: Video generated
+  /video/image-to-video:
+    post:
+      operationId: imageToVideo
+      tags: [video]
+      summary: Generate video from image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                imageUrl:
+                  type: string
+                prompt:
+                  type: string
+                provider:
+                  type: string
+                duration:
+                  type: integer
+              required: [imageUrl, prompt]
+      responses:
+        "201":
+          description: Video generated
+  /video/commercial:
+    post:
+      operationId: generateCommercial
+      tags: [video]
+      summary: Generate commercial video
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                commercialType:
+                  type: string
+                  enum: [technology, startup, product_reveal, os_intro]
+                productName:
+                  type: string
+                description:
+                  type: string
+                brandId:
+                  type: string
+                provider:
+                  type: string
+              required: [commercialType, productName, description]
+      responses:
+        "201":
+          description: Commercial generated
+  /video/storyboard:
+    post:
+      operationId: createStoryboard
+      tags: [video]
+      summary: Create storyboard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                brandId:
+                  type: string
+                aspectRatio:
+                  type: string
+              required: [name, type]
+      responses:
+        "201":
+          description: Storyboard created
+  /video/storyboard/:id:
+    get:
+      operationId: getStoryboard
+      tags: [video]
+      summary: Get storyboard by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Storyboard details
+  /video/storyboard/:id/generate:
+    post:
+      operationId: generateFromStoryboard
+      tags: [video]
+      summary: Generate video from storyboard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Video generated
+  /video/storyboards:
+    get:
+      operationId: listStoryboards
+      tags: [video]
+      summary: List storyboards
+      parameters:
+        - name: brandId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Storyboard list
+  /video/assets:
+    get:
+      operationId: listVideos
+      tags: [video]
+      summary: List videos
+      parameters:
+        - name: brandId
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Video list
+  /video/video/:id:
+    get:
+      operationId: getVideo
+      tags: [video]
+      summary: Get video by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Video details
+    delete:
+      operationId: deleteVideo
+      tags: [video]
+      summary: Delete video
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Video deleted
+  /video/video/:id/variation:
+    post:
+      operationId: createVideoVariation
+      tags: [video]
+      summary: Create video variation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Variation created
+  /video/video/:id/edit:
+    post:
+      operationId: editVideo
+      tags: [video]
+      summary: Edit video
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operation:
+                  type: string
+                  enum: [trim, extend, upscale, aspect_ratio]
+                params:
+                  type: object
+      responses:
+        "201":
+          description: Video edited
+  /video/providers:
+    get:
+      operationId: getVideoProviders
+      tags: [video]
+      summary: Get video providers
+      responses:
+        "200":
+          description: Provider list
+  /video/stats:
+    get:
+      operationId: getVideoStats
+      tags: [video]
+      summary: Get video statistics
       responses:
         "200":
           description: Statistics

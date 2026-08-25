@@ -15,6 +15,7 @@ import deploymentRouter from "./deployment";
 import memoryRouter from "./memory";
 import orchestratorRouter from "./orchestrator";
 import imageRouter from "./image";
+import videoRouter from "./video";
 
 const router: IRouter = Router();
 
@@ -30,6 +31,9 @@ router.use(orchestratorRouter);
 
 // Image Studio Routes
 router.use(imageRouter);
+
+// Video Studio Routes
+router.use(videoRouter);
 
 // Control Plane Routes
 router.use(eventsRouter);
