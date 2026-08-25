@@ -1,12 +1,13 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 2.0.0
+  version: 3.0.0
   description: |
     DEVIL AI Agent Platform API
     
     Phase 1: Control Plane - Mission State Machine, Event Log, Approval Engine, Validation Layer, Tool Registry
     Phase 2: Executor Foundation - Execution Engine, Sandbox, Recovery, Dry Run, Step-by-Step, Auto Pilot
+    Phase 3: Coding Agent Foundation - Workspace Manager, Code Generator, Build/Test/Lint Runners, Diff Engine, Code Review
   contact:
     name: DEVIL Team
 servers:
@@ -31,6 +32,16 @@ tags:
     description: Mission execution engine
   - name: architect
     description: DEVIL Architect full-plan generation
+  - name: workspace
+    description: Workspace management
+  - name: files
+    description: File operations
+  - name: codegen
+    description: Code generation
+  - name: build
+    description: Build and test runners
+  - name: review
+    description: Code review and diff
 paths:
   /healthz:
     get:
@@ -709,6 +720,230 @@ paths:
       responses:
         "200":
           description: Metrics
+  # Phase 3: Coding Agent Paths
+  /coding/workspace:
+    post:
+      operationId: createWorkspace
+      tags: [workspace]
+      summary: Create a new workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkspaceCreate"
+      responses:
+        "201":
+          description: Workspace created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workspace"
+    get:
+      operationId: listWorkspaces
+      tags: [workspace]
+      summary: List all workspaces
+      responses:
+        "200":
+          description: Workspace list
+  /coding/workspace/{id}:
+    get:
+      operationId: getWorkspace
+      tags: [workspace]
+      summary: Get workspace by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workspace details
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteWorkspace
+      tags: [workspace]
+      summary: Delete workspace
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+  /coding/workspace/{id}/snapshots:
+    post:
+      operationId: createSnapshot
+      tags: [workspace]
+      summary: Create workspace snapshot
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Snapshot created
+    get:
+      operationId: listSnapshots
+      tags: [workspace]
+      summary: List workspace snapshots
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Snapshot list
+  /coding/codegen/templates:
+    get:
+      operationId: listTemplates
+      tags: [codegen]
+      summary: List available code templates
+      responses:
+        "200":
+          description: Template list
+  /coding/codegen/generate:
+    post:
+      operationId: generateProject
+      tags: [codegen]
+      summary: Generate project from template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerationRequest"
+      responses:
+        "201":
+          description: Project generated
+  /coding/codegen/mission:
+    post:
+      operationId: runMission
+      tags: [codegen]
+      summary: Run full mission loop
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId:
+                  type: string
+                goal:
+                  type: string
+                projectType:
+                  type: string
+              required: [missionId, goal, projectType]
+      responses:
+        "200":
+          description: Mission result
+  /coding/build/{workspaceId}/build:
+    post:
+      operationId: runBuild
+      tags: [build]
+      summary: Run build command
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                command:
+                  type: string
+      responses:
+        "200":
+          description: Build result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuildResult"
+  /coding/build/{workspaceId}/test:
+    post:
+      operationId: runTests
+      tags: [build]
+      summary: Run tests
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Test results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestResult"
+  /coding/build/{workspaceId}/lint:
+    post:
+      operationId: runLint
+      tags: [build]
+      summary: Run linter
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lint results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LintResult"
+  /coding/review/{workspaceId}/review:
+    post:
+      operationId: reviewCode
+      tags: [review]
+      summary: Review workspace code
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Review results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CodeReview"
+  /coding/review/{workspaceId}/diff:
+    get:
+      operationId: getWorkspaceDiff
+      tags: [review]
+      summary: Get workspace diff
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Diff result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceDiff"
 components:
   schemas:
     HealthStatus:
@@ -1312,6 +1547,321 @@ components:
         risk:
           type: string
           enum: [safe, standard, privileged, critical]
+    # Phase 3 Coding Agent Schemas
+    Workspace:
+      type: object
+      properties:
+        id:
+          type: string
+        missionId:
+          type: string
+        projectType:
+          type: string
+          enum: [react, nextjs, express, fastapi, node_service, typescript, vanilla]
+        status:
+          type: string
+          enum: [creating, ready, active, snapshoting, restoring, deleting, deleted, error]
+        rootPath:
+          type: string
+        snapshots:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    WorkspaceCreate:
+      type: object
+      properties:
+        missionId:
+          type: string
+        projectType:
+          type: string
+          enum: [react, nextjs, express, fastapi, node_service, typescript, vanilla]
+        name:
+          type: string
+      required: [projectType]
+    WorkspaceSnapshot:
+      type: object
+      properties:
+        id:
+          type: string
+        workspaceId:
+          type: string
+        path:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+        size:
+          type: number
+    FileContent:
+      type: object
+      properties:
+        path:
+          type: string
+        content:
+          type: string
+        encoding:
+          type: string
+        size:
+          type: number
+        lineCount:
+          type: number
+    EditResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        oldContent:
+          type: string
+        newContent:
+          type: string
+        diff:
+          type: string
+        linesChanged:
+          type: number
+    CodeTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        projectType:
+          type: string
+        files:
+          type: array
+          items:
+            type: object
+        dependencies:
+          type: object
+    GenerationRequest:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        projectName:
+          type: string
+        projectType:
+          type: string
+        options:
+          type: object
+          properties:
+            typescript:
+              type: boolean
+            tailwind:
+              type: boolean
+            docker:
+              type: boolean
+            ci:
+              type: boolean
+            tests:
+              type: boolean
+            documentation:
+              type: boolean
+      required: [workspaceId, projectName, projectType]
+    GenerationResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        workspaceId:
+          type: string
+        projectName:
+          type: string
+        filesGenerated:
+          type: number
+        files:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+        errors:
+          type: array
+          items:
+            type: string
+    BuildResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        command:
+          type: string
+        exitCode:
+          type: number
+        stdout:
+          type: string
+        stderr:
+          type: string
+        duration:
+          type: number
+        buildWarnings:
+          type: array
+          items:
+            type: string
+    TestResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        testsPassed:
+          type: number
+        testsFailed:
+          type: number
+        testsSkipped:
+          type: number
+        coverage:
+          type: object
+          properties:
+            statements:
+              type: number
+            branches:
+              type: number
+            functions:
+              type: number
+            lines:
+              type: number
+    LintResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        issues:
+          type: array
+          items:
+            $ref: "#/components/schemas/LintIssue"
+        errorCount:
+          type: number
+        warningCount:
+          type: number
+    LintIssue:
+      type: object
+      properties:
+        file:
+          type: string
+        line:
+          type: number
+        column:
+          type: number
+        severity:
+          type: string
+          enum: [error, warning]
+        message:
+          type: string
+        rule:
+          type: string
+    CodeReview:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        overallScore:
+          type: number
+        issues:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReviewIssue"
+        recommendations:
+          type: array
+          items:
+            type: string
+        summary:
+          type: object
+          properties:
+            totalFiles:
+              type: number
+            filesReviewed:
+              type: number
+            critical:
+              type: number
+            errors:
+              type: number
+            warnings:
+              type: number
+            suggestions:
+              type: number
+    ReviewIssue:
+      type: object
+      properties:
+        id:
+          type: string
+        severity:
+          type: string
+          enum: [critical, error, warning, suggestion]
+        category:
+          type: string
+          enum: [syntax, typescript, security, performance, best-practice, structure, documentation, missing]
+        file:
+          type: string
+        line:
+          type: number
+        message:
+          type: string
+        suggestion:
+          type: string
+    WorkspaceDiff:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/FileDiff"
+        summary:
+          type: object
+          properties:
+            totalFiles:
+              type: number
+            filesAdded:
+              type: number
+            filesDeleted:
+              type: number
+            filesModified:
+              type: number
+            totalAdditions:
+              type: number
+            totalDeletions:
+              type: number
+    FileDiff:
+      type: object
+      properties:
+        path:
+          type: string
+        status:
+          type: string
+          enum: [added, deleted, modified, unchanged]
+        additions:
+          type: number
+        deletions:
+          type: number
+        hunks:
+          type: array
+          items:
+            type: object
+    MissionLoopResult:
+      type: object
+      properties:
+        missionId:
+          type: string
+        success:
+          type: boolean
+        workspaceId:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+        duration:
+          type: number
     ErrorResponse:
       type: object
       properties:

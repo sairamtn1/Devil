@@ -9,6 +9,7 @@ import validationRouter from "./validation";
 import toolsRouter from "./tools";
 import controlPlaneRouter from "./control-plane-router";
 import executorRouter from "./executor";
+import codingRouter from "./coding";
 
 const router: IRouter = Router();
 
@@ -26,5 +27,8 @@ router.use(controlPlaneRouter);
 
 // Executor Routes
 router.use(executorRouter);
+
+// Coding Agent Routes
+router.use(codingRouter);
 
 export default router;
