@@ -1,54 +1,39 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
-  title: Api
-  version: 0.1.0
-  description: API specification
+  title: DEVIL API
+  version: 1.0.0
+  description: |
+    DEVIL AI Agent Platform API
+    
+    Phase 1: Control Plane - Mission State Machine, Event Log, Approval Engine, Validation Layer, Tool Registry
+  contact:
+    name: DEVIL Team
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
-  - name: chat
-    description: DEVIL Qwen chat orchestration
   - name: missions
-    description: Autonomous mission execution
-  - name: dashboard
-    description: Mission control dashboard data
+    description: Mission management
+  - name: events
+    description: Event log and audit trail
+  - name: approvals
+    description: Approval engine
+  - name: validation
+    description: Validation layer
+  - name: tools
+    description: Tool registry
+  - name: control-plane
+    description: Control plane status and dashboard
   - name: architect
     description: DEVIL Architect full-plan generation
 paths:
-  /chat:
-    post:
-      operationId: createChat
-      tags: [chat]
-      summary: Send a message to DEVIL
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ChatInput"
-      responses:
-        "200":
-          description: DEVIL response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ChatResponse"
-        "500":
-          description: Chat provider failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -56,43 +41,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
-  /dashboard:
-    get:
-      operationId: getDashboard
-      tags: [dashboard]
-      summary: Get mission control dashboard
-      responses:
-        "200":
-          description: Dashboard overview
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Dashboard"
-  /activity:
-    get:
-      operationId: listActivity
-      tags: [dashboard]
-      summary: List recent agent activity
-      responses:
-        "200":
-          description: Recent activity
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Activity"
   /missions:
+    get:
+      operationId: listMissions
+      tags: [missions]
+      summary: List all missions
+      responses:
+        "200":
+          description: List of missions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  missions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Mission"
+                  total:
+                    type: number
     post:
       operationId: createMission
       tags: [missions]
-      summary: Start an autonomous mission
+      summary: Create a new mission
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MissionInput"
+              $ref: "#/components/schemas/MissionCreate"
       responses:
         "201":
           description: Mission created
@@ -100,24 +77,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Mission"
-    get:
-      operationId: listMissions
-      tags: [missions]
-      summary: List missions
-      responses:
-        "200":
-          description: Missions
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Mission"
   /missions/{id}:
     get:
       operationId: getMission
       tags: [missions]
-      summary: Get a mission
+      summary: Get mission with state
       parameters:
         - name: id
           in: path
@@ -126,23 +90,335 @@ paths:
             type: string
       responses:
         "200":
-          description: Mission
+          description: Mission details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mission:
+                    $ref: "#/components/schemas/Mission"
+                  phases:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Phase"
+                  tasks:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Task"
+                  nextTask:
+                    $ref: "#/components/schemas/Task"
+        "404":
+          description: Mission not found
+    patch:
+      operationId: updateMission
+      tags: [missions]
+      summary: Update mission state
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MissionUpdate"
+      responses:
+        "200":
+          description: Mission updated
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Mission"
+  /missions/{id}/phases:
+    get:
+      operationId: getMissionPhases
+      tags: [missions]
+      summary: Get mission phases
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Phase list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  phases:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Phase"
+  /missions/{id}/tasks:
+    get:
+      operationId: getMissionTasks
+      tags: [missions]
+      summary: Get mission tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Task list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Task"
+  /events:
+    get:
+      operationId: listEvents
+      tags: [events]
+      summary: List events with filters
+      parameters:
+        - name: missionId
+          in: query
+          schema:
+            type: string
+        - name: severity
+          in: query
+          schema:
+            type: string
+            enum: [info, warning, error, critical]
+        - name: limit
+          in: query
+          schema:
+            type: number
+            default: 50
+      responses:
+        "200":
+          description: Event list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Event"
+                  total:
+                    type: number
+  /events/stats:
+    get:
+      operationId: getEventStats
+      tags: [events]
+      summary: Get event statistics
+      responses:
+        "200":
+          description: Event statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventStatistics"
+  /approvals:
+    get:
+      operationId: listApprovals
+      tags: [approvals]
+      summary: List approvals
+      parameters:
+        - name: missionId
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, denied, expired]
+      responses:
+        "200":
+          description: Approval list
+    post:
+      operationId: createApproval
+      tags: [approvals]
+      summary: Create approval request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApprovalCreate"
+      responses:
+        "201":
+          description: Approval created
+  /approvals/pending:
+    get:
+      operationId: getPendingApprovals
+      tags: [approvals]
+      summary: Get pending approvals
+      responses:
+        "200":
+          description: Pending approval list
+  /approvals/stats:
+    get:
+      operationId: getApprovalStats
+      tags: [approvals]
+      summary: Get approval statistics
+      responses:
+        "200":
+          description: Approval statistics
+  /approvals/{id}:
+    get:
+      operationId: getApproval
+      tags: [approvals]
+      summary: Get single approval
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Approval details
         "404":
-          description: Mission not found
+          description: Approval not found
+  /approvals/{id}/decision:
+    post:
+      operationId: processApprovalDecision
+      tags: [approvals]
+      summary: Process approval decision
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApprovalDecision"
+      responses:
+        "200":
+          description: Decision processed
+  /validation/pre-execution:
+    post:
+      operationId: preExecutionValidation
+      tags: [validation]
+      summary: Pre-execution validation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidationRequest"
+      responses:
+        "200":
+          description: Validation report
+  /validation/resume:
+    post:
+      operationId: resumeValidation
+      tags: [validation]
+      summary: Resume validation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId:
+                  type: string
+      responses:
+        "200":
+          description: Validation report
+  /tools:
+    get:
+      operationId: listTools
+      tags: [tools]
+      summary: List all tools
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: capability
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tool list
+    post:
+      operationId: initializeTools
+      tags: [tools]
+      summary: Initialize tool registry
+      responses:
+        "200":
+          description: Tools initialized
+  /tools/categories:
+    get:
+      operationId: listToolCategories
+      tags: [tools]
+      summary: List tool categories
+      responses:
+        "200":
+          description: Category list
+  /tools/check:
+    post:
+      operationId: checkToolExecution
+      tags: [tools]
+      summary: Check if tool can be executed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                toolName:
+                  type: string
+                missionId:
+                  type: string
+      responses:
+        "200":
+          description: Check result
+  /control-plane/status:
+    get:
+      operationId: getControlPlaneStatus
+      tags: [control-plane]
+      summary: Get control plane status
+      responses:
+        "200":
+          description: Control plane status
+  /control-plane/dashboard:
+    get:
+      operationId: getDashboard
+      tags: [control-plane]
+      summary: Get dashboard data
+      responses:
+        "200":
+          description: Dashboard data
+  /control-plane/initialize:
+    post:
+      operationId: initializeControlPlane
+      tags: [control-plane]
+      summary: Initialize control plane
+      responses:
+        "200":
+          description: Control plane initialized
   /architect:
     post:
       operationId: createArchitectPlan
       tags: [architect]
-      summary: Generate a full DEVIL Architect plan for a goal
-      description: >
-        Runs mission analysis, requirements, user stories, database schema,
-        API design, frontend architecture, backend architecture, folder
-        structure, and implementation tasks for a single natural-language
-        goal, using the existing memory, planner, and AI layers.
+      summary: Generate DEVIL Architect plan
       requestBody:
         required: true
         content:
@@ -151,161 +427,389 @@ paths:
               $ref: "#/components/schemas/ArchitectPlanInput"
       responses:
         "201":
-          description: Architect plan generated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ArchitectPlan"
+          description: Plan generated
         "502":
           description: AI provider failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
         "500":
-          description: Architect plan generation failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          description: Generation failed
 components:
   schemas:
-    ChatInput:
-      type: object
-      properties:
-        message:
-          type: string
-          minLength: 1
-        conversationId:
-          type: ["string", "null"]
-        projectName:
-          type: ["string", "null"]
-      required: [message]
-    ChatResponse:
-      type: object
-      properties:
-        conversationId:
-          type: string
-        message:
-          type: string
-        model:
-          type: string
-        missionId:
-          type: ["string", "null"]
-        plan:
-          type: ["object", "null"]
-          additionalProperties: true
-      required: [conversationId, message, model, missionId, plan]
-    ErrorResponse:
-      type: object
-      properties:
-        error:
-          type: string
-      required: [error]
     HealthStatus:
       type: object
       properties:
         status:
           type: string
-      required:
-        - status
-    MissionInput:
-      type: object
-      properties:
-        goal:
-          type: string
-          minLength: 3
-      required:
-        - goal
-    MissionStep:
-      type: object
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-        status:
-          type: string
-          enum: [queued, active, complete]
-        detail:
-          type: string
-      required: [id, label, status, detail]
-    MissionOutcome:
-      type: object
-      properties:
-        kind:
-          type: string
-          enum: [image, text]
-        title:
-          type: string
-        description:
-          type: string
-        assetUrl:
-          type: ["string", "null"]
-        ready:
-          type: boolean
-      required: [kind, title, description, assetUrl, ready]
+      required: [status]
+    MissionStatus:
+      type: string
+      enum: [queued, running, blocked, awaiting_approval, succeeded, failed, cancelled]
+    PhaseStatus:
+      type: string
+      enum: [pending, approved, queued, in_progress, completed, failed, skipped, paused]
+    TaskStatus:
+      type: string
+      enum: [pending, in_progress, completed, failed, skipped]
     Mission:
       type: object
       properties:
         id:
           type: string
+        userId:
+          type: string
+        projectId:
+          type: string
         goal:
           type: string
         status:
-          type: string
-          enum: [planning, executing, complete]
+          $ref: "#/components/schemas/MissionStatus"
         progress:
           type: number
+        currentPhase:
+          type: string
+        complexity:
+          type: number
+        timelineEstimate:
+          type: string
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
         createdAt:
           type: string
-        steps:
-          type: array
-          items:
-            $ref: "#/components/schemas/MissionStep"
-        outcome:
-          $ref: "#/components/schemas/MissionOutcome"
-      required: [id, goal, status, progress, createdAt, steps, outcome]
-    Activity:
+        updatedAt:
+          type: string
+        startedAt:
+          type: string
+        completedAt:
+          type: string
+        errorMessage:
+          type: string
+    MissionCreate:
+      type: object
+      properties:
+        goal:
+          type: string
+          minLength: 3
+        projectId:
+          type: string
+      required: [goal]
+    MissionUpdate:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/MissionStatus"
+        progress:
+          type: number
+          minimum: 0
+          maximum: 100
+    Phase:
       type: object
       properties:
         id:
           type: string
-        type:
+        missionId:
           type: string
-          enum: [mission, code, image, video, system]
-        title:
+        name:
           type: string
-        detail:
+        description:
+          type: string
+        order:
+          type: number
+        status:
+          $ref: "#/components/schemas/PhaseStatus"
+        progress:
+          type: number
+        dependencies:
+          type: array
+          items:
+            type: string
+        deliverables:
+          type: array
+          items:
+            type: string
+        approvalRequired:
+          type: boolean
+        autoApproved:
+          type: boolean
+        createdAt:
+          type: string
+        startedAt:
+          type: string
+        completedAt:
+          type: string
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+        missionId:
+          type: string
+        phaseId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        order:
+          type: number
+        status:
+          $ref: "#/components/schemas/TaskStatus"
+        category:
+          type: string
+          enum: [frontend, backend, database, deployment, general]
+        toolCapabilities:
+          type: array
+          items:
+            type: string
+        effort:
+          type: number
+        result:
+          type: string
+        errorMessage:
+          type: string
+        createdAt:
+          type: string
+        startedAt:
+          type: string
+        completedAt:
+          type: string
+    EventSeverity:
+      type: string
+      enum: [info, warning, error, critical]
+    EventType:
+      type: string
+      enum:
+        - mission_created
+        - mission_started
+        - mission_progress
+        - mission_blocked
+        - mission_paused
+        - mission_resumed
+        - mission_completed
+        - mission_failed
+        - mission_cancelled
+        - mission_approved
+        - phase_started
+        - phase_completed
+        - phase_failed
+        - phase_skipped
+        - task_started
+        - task_completed
+        - task_failed
+        - task_skipped
+        - approval_requested
+        - approval_granted
+        - approval_denied
+        - approval_timeout
+        - validation_passed
+        - validation_failed
+        - validation_warning
+        - tool_invoked
+        - tool_completed
+        - tool_failed
+        - tool_timeout
+        - system_error
+        - system_recovery
+        - checkpoint_created
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+        missionId:
+          type: string
+        phaseId:
+          type: string
+        taskId:
+          type: string
+        eventType:
+          $ref: "#/components/schemas/EventType"
+        severity:
+          $ref: "#/components/schemas/EventSeverity"
+        message:
+          type: string
+        details:
+          type: object
+        actor:
           type: string
         timestamp:
           type: string
-      required: [id, type, title, detail, timestamp]
-    Dashboard:
+    EventStatistics:
       type: object
       properties:
-        aiCore:
-          type: string
-          enum: [online, offline]
-        memory:
-          type: string
-          enum: [optimal, indexing, limited]
-        speed:
-          type: string
-        connections:
-          type: string
-          enum: [secure, warning]
-        devilMode:
-          type: boolean
-        uptime:
-          type: string
-        tasksCompleted:
+        totalEvents:
           type: number
-        filesProcessed:
+        eventsLast24Hours:
+          type: number
+        eventsLastWeek:
+          type: number
+        criticalEvents:
+          type: number
+        failedOperations:
+          type: number
+        topEventTypes:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              count:
+                type: number
+    ApprovalType:
+      type: string
+      enum: [phase_execution, tool_usage, github_write, deployment, secret_access, paid_api, infrastructure, production_action]
+    ApprovalStatus:
+      type: string
+      enum: [pending, approved, denied, expired]
+    Approval:
+      type: object
+      properties:
+        id:
           type: string
-        thoughtsPerSecond:
+        missionId:
           type: string
-      required: [aiCore, memory, speed, connections, devilMode, uptime, tasksCompleted, filesProcessed, thoughtsPerSecond]
+        phaseId:
+          type: string
+        taskId:
+          type: string
+        type:
+          $ref: "#/components/schemas/ApprovalType"
+        status:
+          $ref: "#/components/schemas/ApprovalStatus"
+        title:
+          type: string
+        description:
+          type: string
+        justification:
+          type: string
+        riskAssessment:
+          type: string
+        requestedAt:
+          type: string
+        expiresAt:
+          type: string
+        respondedAt:
+          type: string
+        responderId:
+          type: string
+        response:
+          type: string
+    ApprovalCreate:
+      type: object
+      properties:
+        missionId:
+          type: string
+        phaseId:
+          type: string
+        taskId:
+          type: string
+        type:
+          $ref: "#/components/schemas/ApprovalType"
+        title:
+          type: string
+        description:
+          type: string
+        justification:
+          type: string
+        riskAssessment:
+          type: string
+        expiresIn:
+          type: number
+      required: [missionId, type, title]
+    ApprovalDecision:
+      type: object
+      properties:
+        approved:
+          type: boolean
+        responderId:
+          type: string
+        response:
+          type: string
+      required: [approved]
+    ValidationSeverity:
+      type: string
+      enum: [info, warning, error, critical]
+    ValidationResult:
+      type: object
+      properties:
+        passed:
+          type: boolean
+        severity:
+          $ref: "#/components/schemas/ValidationSeverity"
+        rule:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+        canProceed:
+          type: boolean
+        timestamp:
+          type: string
+    ValidationReport:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        target:
+          type: string
+        targetId:
+          type: string
+        validationType:
+          type: string
+        overallPassed:
+          type: boolean
+        overallSeverity:
+          $ref: "#/components/schemas/ValidationSeverity"
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationResult"
+        blocked:
+          type: boolean
+        blockedReason:
+          type: string
+    ValidationRequest:
+      type: object
+      properties:
+        target:
+          type: string
+          enum: [mission, phase, task]
+        targetId:
+          type: string
+        requestedAction:
+          type: string
+      required: [target, targetId]
+    Tool:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        version:
+          type: string
+        category:
+          type: string
+        capabilities:
+          type: array
+          items:
+            type: string
+        permissionLevel:
+          type: string
+          enum: [safe, standard, privileged, critical]
+        approvalRequired:
+          type: boolean
+        approvalType:
+          $ref: "#/components/schemas/ApprovalType"
+        timeout:
+          type: number
+        retryLimit:
+          type: number
+        description:
+          type: string
+        enabled:
+          type: boolean
     ArchitectPlanInput:
       type: object
       properties:
@@ -313,192 +817,6 @@ components:
           type: string
           minLength: 3
       required: [goal]
-    MissionAnalysis:
-      type: object
-      properties:
-        projectName:
-          type: string
-        requirements:
-          type: array
-          items:
-            type: string
-        architecture:
-          type: array
-          items:
-            type: string
-        databaseDesign:
-          type: array
-          items:
-            type: string
-      required: [projectName, requirements, architecture, databaseDesign]
-    UserStory:
-      type: object
-      properties:
-        id:
-          type: string
-        role:
-          type: string
-        goal:
-          type: string
-        benefit:
-          type: string
-        acceptanceCriteria:
-          type: array
-          items:
-            type: string
-      required: [id, role, goal, benefit, acceptanceCriteria]
-    DatabaseColumn:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          type: string
-        constraints:
-          type: array
-          items:
-            type: string
-      required: [name, type, constraints]
-    DatabaseTable:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        columns:
-          type: array
-          items:
-            $ref: "#/components/schemas/DatabaseColumn"
-        relations:
-          type: array
-          items:
-            type: string
-      required: [name, description, columns, relations]
-    DatabaseSchemaDesign:
-      type: object
-      properties:
-        tables:
-          type: array
-          items:
-            $ref: "#/components/schemas/DatabaseTable"
-        notes:
-          type: array
-          items:
-            type: string
-      required: [tables, notes]
-    ApiEndpoint:
-      type: object
-      properties:
-        method:
-          type: string
-          enum: [GET, POST, PUT, PATCH, DELETE]
-        path:
-          type: string
-        description:
-          type: string
-        requestBody:
-          type: string
-        response:
-          type: string
-        authRequired:
-          type: boolean
-      required: [method, path, description, requestBody, response, authRequired]
-    ApiDesign:
-      type: object
-      properties:
-        baseUrl:
-          type: string
-        authStrategy:
-          type: string
-        endpoints:
-          type: array
-          items:
-            $ref: "#/components/schemas/ApiEndpoint"
-      required: [baseUrl, authStrategy, endpoints]
-    FrontendRoute:
-      type: object
-      properties:
-        path:
-          type: string
-        purpose:
-          type: string
-      required: [path, purpose]
-    FrontendArchitecture:
-      type: object
-      properties:
-        framework:
-          type: string
-        routes:
-          type: array
-          items:
-            $ref: "#/components/schemas/FrontendRoute"
-        keyComponents:
-          type: array
-          items:
-            type: string
-        stateManagement:
-          type: string
-        stylingApproach:
-          type: string
-      required: [framework, routes, keyComponents, stateManagement, stylingApproach]
-    BackendLayer:
-      type: object
-      properties:
-        name:
-          type: string
-        responsibility:
-          type: string
-      required: [name, responsibility]
-    BackendArchitecture:
-      type: object
-      properties:
-        framework:
-          type: string
-        layers:
-          type: array
-          items:
-            $ref: "#/components/schemas/BackendLayer"
-        services:
-          type: array
-          items:
-            type: string
-        integrations:
-          type: array
-          items:
-            type: string
-      required: [framework, layers, services, integrations]
-    FolderEntry:
-      type: object
-      properties:
-        path:
-          type: string
-        purpose:
-          type: string
-      required: [path, purpose]
-    FolderStructure:
-      type: object
-      properties:
-        tree:
-          type: string
-        explanation:
-          type: array
-          items:
-            $ref: "#/components/schemas/FolderEntry"
-      required: [tree, explanation]
-    ImplementationTask:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        category:
-          type: string
-          enum: [frontend, backend, database, deployment, general]
-        description:
-          type: string
-      required: [id, title, category, description]
     ArchitectPlan:
       type: object
       properties:
@@ -511,7 +829,7 @@ components:
         goal:
           type: string
         missionAnalysis:
-          $ref: "#/components/schemas/MissionAnalysis"
+          type: object
         requirements:
           type: array
           items:
@@ -519,21 +837,21 @@ components:
         userStories:
           type: array
           items:
-            $ref: "#/components/schemas/UserStory"
+            type: object
         databaseSchema:
-          $ref: "#/components/schemas/DatabaseSchemaDesign"
+          type: object
         apiDesign:
-          $ref: "#/components/schemas/ApiDesign"
+          type: object
         frontendArchitecture:
-          $ref: "#/components/schemas/FrontendArchitecture"
+          type: object
         backendArchitecture:
-          $ref: "#/components/schemas/BackendArchitecture"
+          type: object
         folderStructure:
-          $ref: "#/components/schemas/FolderStructure"
+          type: object
         implementationTasks:
           type: array
           items:
-            $ref: "#/components/schemas/ImplementationTask"
+            type: object
         memoryUsed:
           type: boolean
         createdAt:
@@ -554,4 +872,9 @@ components:
         - implementationTasks
         - memoryUsed
         - createdAt
-
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
