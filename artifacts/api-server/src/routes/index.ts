@@ -16,12 +16,16 @@ import memoryRouter from "./memory";
 import orchestratorRouter from "./orchestrator";
 import imageRouter from "./image";
 import videoRouter from "./video";
+import brainRouter from "./brain";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
 router.use(missionsRouter);
 router.use(aiRouter);
+
+// DEVIL Brain Routes
+router.use(brainRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);

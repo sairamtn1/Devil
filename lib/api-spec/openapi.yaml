@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 10.0.0
+  version: 11.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -15,6 +15,7 @@ info:
     Phase 8: Orchestrator - Agent Registry, Mission Router, Task Dispatcher, Dependency Coordinator, Workflow Engine, GOD/DEVIL Modes
     Phase 9: Image Studio - Image Generation, Logo Design, Brand System, Asset Library, Provider Abstraction
     Phase 10: Video Studio - Video Generation, Storyboard Engine, Commercial Templates, Provider Abstraction
+    Phase 11: DEVIL Brain - Central Intelligence Core, Mission Analysis, Model Router, Reasoning Engine, Context Builder, Decision Center
   contact:
     name: DEVIL Team
 servers:
@@ -61,6 +62,8 @@ tags:
     description: Image Studio - generation and asset management
   - name: video
     description: Video Studio - generation and asset management
+  - name: brain
+    description: DEVIL Brain - Central Intelligence Core
 paths:
   /healthz:
     get:
@@ -2372,6 +2375,227 @@ paths:
       responses:
         "200":
           description: Statistics
+  # Phase 11: DEVIL Brain Paths
+  /brain/analyze:
+    post:
+      operationId: analyzeMission
+      tags: [brain]
+      summary: Analyze a mission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goal:
+                  type: string
+                urgency:
+                  type: string
+                  enum: [low, normal, high, critical]
+                risk:
+                  type: string
+                  enum: [low, medium, high, critical]
+              required: [goal]
+      responses:
+        "201":
+          description: Mission analysis
+  /brain/mission/:id:
+    get:
+      operationId: getMissionAnalysis
+      tags: [brain]
+      summary: Get mission analysis
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission analysis
+  /brain/route:
+    post:
+      operationId: routeTask
+      tags: [brain]
+      summary: Route task to model
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                taskType:
+                  type: string
+                  enum: [architecture, coding, deployment, research, design, image, video, analysis, planning, reasoning]
+                reasoning:
+                  type: boolean
+                speed:
+                  type: boolean
+                cost:
+                  type: boolean
+              required: [taskType]
+      responses:
+        "200":
+          description: Model selection
+  /brain/models:
+    get:
+      operationId: getModels
+      tags: [brain]
+      summary: Get available models
+      responses:
+        "200":
+          description: Model configurations
+  /brain/reason:
+    post:
+      operationId: reasonMission
+      tags: [brain]
+      summary: Reason about mission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId:
+                  type: string
+                goal:
+                  type: string
+      responses:
+        "201":
+          description: Reasoning trace
+  /brain/decide:
+    post:
+      operationId: makeDecision
+      tags: [brain]
+      summary: Make a decision
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId:
+                  type: string
+                type:
+                  type: string
+                  enum: [agent_selection, model_selection, workflow_decision, approval_required, retry_decision, recovery_decision]
+                options:
+                  type: array
+                  items:
+                    type: string
+                reasoning:
+                  type: string
+              required: [type, options]
+      responses:
+        "201":
+          description: Decision made
+  /brain/decisions:
+    get:
+      operationId: getDecisions
+      tags: [brain]
+      summary: Get decisions
+      parameters:
+        - name: missionId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Decisions
+  /brain/workflow:
+    post:
+      operationId: planWorkflow
+      tags: [brain]
+      summary: Plan workflow
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId:
+                  type: string
+                goal:
+                  type: string
+                urgency:
+                  type: string
+                risk:
+                  type: string
+      responses:
+        "201":
+          description: Workflow plan
+  /brain/context:
+    post:
+      operationId: buildContext
+      tags: [brain]
+      summary: Build context
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId:
+                  type: string
+                sources:
+                  type: array
+                  items:
+                    type: object
+                maxTokens:
+                  type: integer
+              required: [sources]
+      responses:
+        "200":
+          description: Context assembly
+  /brain/mode:
+    get:
+      operationId: getMode
+      tags: [brain]
+      summary: Get operating mode
+      responses:
+        "200":
+          description: Mode characteristics
+    post:
+      operationId: setMode
+      tags: [brain]
+      summary: Set operating mode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mode:
+                  type: string
+                  enum: [god, devil]
+              required: [mode]
+      responses:
+        "200":
+          description: Mode set
+  /brain/recommendations:
+    get:
+      operationId: getRecommendations
+      tags: [brain]
+      summary: Get recommendations
+      parameters:
+        - name: agentType
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: taskDomain
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Recommendations
   # Phase 6: Memory System Paths
   /memory:
     get:
