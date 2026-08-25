@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 8.0.0
+  version: 9.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -13,6 +13,7 @@ info:
     Phase 6: Memory System - User/Project/Mission/Repository/Execution/Knowledge Memory, Retrieval, Search
     Phase 7: Architect 2.0 - Goal Analysis, Complexity Engine, Risk Engine, Timeline Engine, Stack Recommendation, Adaptive Planner
     Phase 8: Orchestrator - Agent Registry, Mission Router, Task Dispatcher, Dependency Coordinator, Workflow Engine, GOD/DEVIL Modes
+    Phase 9: Image Studio - Image Generation, Logo Design, Brand System, Asset Library, Provider Abstraction
   contact:
     name: DEVIL Team
 servers:
@@ -55,6 +56,8 @@ tags:
     description: Memory and knowledge system
   - name: orchestrator
     description: Multi-agent orchestration system
+  - name: image
+    description: Image Studio - generation and asset management
 paths:
   /healthz:
     get:
@@ -1889,6 +1892,230 @@ paths:
       responses:
         "200":
           description: Events
+  # Phase 9: Image Studio Paths
+  /image/generate:
+    post:
+      operationId: generateImage
+      tags: [image]
+      summary: Generate an image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt:
+                  type: string
+                type:
+                  type: string
+                  enum: [logo, app_icon, favicon, landing_page, dashboard, mobile_ui, illustration, banner, marketing, icon, avatar, thumbnail]
+                provider:
+                  type: string
+                  enum: [openai, flux, stable_diffusion]
+                brandId:
+                  type: string
+                negativePrompt:
+                  type: string
+                width:
+                  type: integer
+                height:
+                  type: integer
+                style:
+                  type: string
+              required: [prompt, type]
+      responses:
+        "201":
+          description: Image generated
+  /image/edit:
+    post:
+      operationId: editImage
+      tags: [image]
+      summary: Edit an image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assetId:
+                  type: string
+                prompt:
+                  type: string
+                provider:
+                  type: string
+              required: [assetId, prompt]
+      responses:
+        "201":
+          description: Image edited
+  /image/variation:
+    post:
+      operationId: createVariation
+      tags: [image]
+      summary: Create image variation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assetId:
+                  type: string
+                provider:
+                  type: string
+              required: [assetId]
+      responses:
+        "201":
+          description: Variation created
+  /image/assets:
+    get:
+      operationId: listAssets
+      tags: [image]
+      summary: List assets
+      parameters:
+        - name: brandId
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Asset list
+  /image/asset/:id:
+    get:
+      operationId: getAsset
+      tags: [image]
+      summary: Get asset by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Asset details
+    delete:
+      operationId: deleteAsset
+      tags: [image]
+      summary: Delete asset
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Asset deleted
+  /image/brands:
+    get:
+      operationId: listBrands
+      tags: [image]
+      summary: List brands
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Brand list
+    post:
+      operationId: createBrand
+      tags: [image]
+      summary: Create brand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                userId:
+                  type: string
+                colors:
+                  type: array
+                  items:
+                    type: object
+                typography:
+                  type: object
+                visualStyle:
+                  type: string
+              required: [name]
+      responses:
+        "201":
+          description: Brand created
+  /image/brand/:id:
+    get:
+      operationId: getBrand
+      tags: [image]
+      summary: Get brand by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Brand details
+    patch:
+      operationId: updateBrand
+      tags: [image]
+      summary: Update brand
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Brand updated
+  /image/prompt/build:
+    post:
+      operationId: buildPrompt
+      tags: [image]
+      summary: Build image prompt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                description:
+                  type: string
+                brandId:
+                  type: string
+                style:
+                  type: string
+              required: [type, description]
+      responses:
+        "200":
+          description: Prompt built
+  /image/stats:
+    get:
+      operationId: getImageStats
+      tags: [image]
+      summary: Get image statistics
+      responses:
+        "200":
+          description: Statistics
   # Phase 6: Memory System Paths
   /memory:
     get:

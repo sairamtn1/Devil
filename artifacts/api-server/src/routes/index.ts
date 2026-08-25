@@ -14,6 +14,7 @@ import githubRouter from "./github";
 import deploymentRouter from "./deployment";
 import memoryRouter from "./memory";
 import orchestratorRouter from "./orchestrator";
+import imageRouter from "./image";
 
 const router: IRouter = Router();
 
@@ -26,6 +27,9 @@ router.use(architectRouter);
 
 // Orchestrator Routes
 router.use(orchestratorRouter);
+
+// Image Studio Routes
+router.use(imageRouter);
 
 // Control Plane Routes
 router.use(eventsRouter);
