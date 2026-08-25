@@ -1,11 +1,12 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 1.0.0
+  version: 2.0.0
   description: |
     DEVIL AI Agent Platform API
     
     Phase 1: Control Plane - Mission State Machine, Event Log, Approval Engine, Validation Layer, Tool Registry
+    Phase 2: Executor Foundation - Execution Engine, Sandbox, Recovery, Dry Run, Step-by-Step, Auto Pilot
   contact:
     name: DEVIL Team
 servers:
@@ -26,6 +27,8 @@ tags:
     description: Tool registry
   - name: control-plane
     description: Control plane status and dashboard
+  - name: executor
+    description: Mission execution engine
   - name: architect
     description: DEVIL Architect full-plan generation
 paths:
@@ -432,6 +435,280 @@ paths:
           description: AI provider failure
         "500":
           description: Generation failed
+  /executor/start:
+    post:
+      operationId: startExecutor
+      tags: [executor]
+      summary: Start a new executor for a mission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecutorStart"
+      responses:
+        "201":
+          description: Executor started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutorStatus"
+        "400":
+          description: Invalid request
+  /executor/{executorId}/pause:
+    post:
+      operationId: pauseExecutor
+      tags: [executor]
+      summary: Pause execution
+      parameters:
+        - name: executorId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Executor paused
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutorStatus"
+  /executor/{executorId}/resume:
+    post:
+      operationId: resumeExecutor
+      tags: [executor]
+      summary: Resume execution
+      parameters:
+        - name: executorId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Executor resumed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutorStatus"
+  /executor/{executorId}/cancel:
+    post:
+      operationId: cancelExecutor
+      tags: [executor]
+      summary: Cancel execution
+      parameters:
+        - name: executorId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Executor cancelled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutorStatus"
+  /executor/{executorId}:
+    get:
+      operationId: getExecutorStatus
+      tags: [executor]
+      summary: Get executor status
+      parameters:
+        - name: executorId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Executor status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutorStatus"
+        "404":
+          description: Executor not found
+  /executor/mission/{missionId}:
+    get:
+      operationId: getExecutorByMission
+      tags: [executor]
+      summary: Get executor status by mission ID
+      parameters:
+        - name: missionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Executor status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutorStatus"
+        "404":
+          description: No executor found
+  /executor/mission/{missionId}/full:
+    get:
+      operationId: getExecutorFullStatus
+      tags: [executor]
+      summary: Get full executor status with queue
+      parameters:
+        - name: missionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Full status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  executor:
+                    $ref: "#/components/schemas/ExecutorStatus"
+                  queue:
+                    $ref: "#/components/schemas/QueueSummary"
+  /executor/{executorId}/events:
+    get:
+      operationId: getExecutorEvents
+      tags: [executor]
+      summary: Get executor events
+      parameters:
+        - name: executorId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: number
+            default: 100
+      responses:
+        "200":
+          description: Event list
+  /executor/mission/{missionId}/events:
+    get:
+      operationId: getExecutorEventsByMission
+      tags: [executor]
+      summary: Get executor events by mission ID
+      parameters:
+        - name: missionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: number
+            default: 100
+      responses:
+        "200":
+          description: Event list
+  /executor/{executorId}/approve/{taskId}:
+    post:
+      operationId: approveAndContinue
+      tags: [executor]
+      summary: Approve task and continue execution
+      parameters:
+        - name: executorId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutorStatus"
+  /executor/{executorId}/deny/{taskId}:
+    post:
+      operationId: denyAndSkip
+      tags: [executor]
+      summary: Deny task and skip it
+      parameters:
+        - name: executorId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        "200":
+          description: Denied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutorStatus"
+  /executor/dry-run:
+    post:
+      operationId: dryRun
+      tags: [executor]
+      summary: Generate dry run plan for a mission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId:
+                  type: string
+                userId:
+                  type: string
+              required: [missionId]
+      responses:
+        "200":
+          description: Dry run plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  plan:
+                    $ref: "#/components/schemas/DryRunPlan"
+                  executor:
+                    $ref: "#/components/schemas/ExecutorStatus"
+  /executor/health:
+    get:
+      operationId: executorHealth
+      tags: [executor]
+      summary: Check executor health
+      responses:
+        "200":
+          description: Health status
+  /executor/metrics:
+    get:
+      operationId: executorMetrics
+      tags: [executor]
+      summary: Get executor metrics
+      responses:
+        "200":
+          description: Metrics
 components:
   schemas:
     HealthStatus:
@@ -872,6 +1149,169 @@ components:
         - implementationTasks
         - memoryUsed
         - createdAt
+    # Executor Schemas
+    ExecutorState:
+      type: string
+      enum: [idle, queued, preparing, validating, running, paused, awaiting_approval, recovering, failed, completed, cancelled]
+    ExecutionMode:
+      type: string
+      enum: [dry_run, step_by_step, auto_pilot]
+    ExecutorStart:
+      type: object
+      properties:
+        missionId:
+          type: string
+        mode:
+          $ref: "#/components/schemas/ExecutionMode"
+        userId:
+          type: string
+        sandboxLimits:
+          $ref: "#/components/schemas/ResourceLimits"
+      required: [missionId]
+    ResourceLimits:
+      type: object
+      properties:
+        maxMemory:
+          type: string
+        maxCpu:
+          type: string
+        maxDuration:
+          type: number
+        maxDisk:
+          type: string
+        allowNetwork:
+          type: boolean
+        allowFilesystem:
+          type: boolean
+        allowedPaths:
+          type: array
+          items:
+            type: string
+    QueueStats:
+      type: object
+      properties:
+        total:
+          type: number
+        pending:
+          type: number
+        executing:
+          type: number
+        completed:
+          type: number
+        failed:
+          type: number
+    ExecutorStatus:
+      type: object
+      properties:
+        id:
+          type: string
+        missionId:
+          type: string
+        state:
+          $ref: "#/components/schemas/ExecutorState"
+        mode:
+          $ref: "#/components/schemas/ExecutionMode"
+        progress:
+          type: number
+        currentPhase:
+          type: string
+        currentTask:
+          type: string
+        queueStats:
+          $ref: "#/components/schemas/QueueStats"
+        sandbox:
+          type: object
+          properties:
+            active:
+              type: boolean
+            sessionId:
+              type: string
+        startedAt:
+          type: string
+        pausedAt:
+          type: string
+        completedAt:
+          type: string
+        error:
+          type: string
+    QueueSummary:
+      type: object
+      properties:
+        missionId:
+          type: string
+        totalTasks:
+          type: number
+        pendingTasks:
+          type: number
+        executingTasks:
+          type: number
+        completedTasks:
+          type: number
+        failedTasks:
+          type: number
+        blockedTasks:
+          type: number
+        progress:
+          type: number
+    DryRunPlan:
+      type: object
+      properties:
+        missionId:
+          type: string
+        phases:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              tasks:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DryRunTask"
+        estimatedDuration:
+          type: number
+        totalFiles:
+          type: array
+          items:
+            type: string
+        totalCommands:
+          type: array
+          items:
+            type: string
+        requiredTools:
+          type: array
+          items:
+            type: string
+    DryRunTask:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        tools:
+          type: array
+          items:
+            type: string
+        files:
+          type: array
+          items:
+            type: string
+        commands:
+          type: array
+          items:
+            type: string
+        impact:
+          type: string
+          enum: [low, medium, high]
+        risk:
+          type: string
+          enum: [safe, standard, privileged, critical]
     ErrorResponse:
       type: object
       properties:

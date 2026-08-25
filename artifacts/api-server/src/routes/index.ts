@@ -8,6 +8,7 @@ import approvalsRouter from "./approvals";
 import validationRouter from "./validation";
 import toolsRouter from "./tools";
 import controlPlaneRouter from "./control-plane-router";
+import executorRouter from "./executor";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,8 @@ router.use(approvalsRouter);
 router.use(validationRouter);
 router.use(toolsRouter);
 router.use(controlPlaneRouter);
+
+// Executor Routes
+router.use(executorRouter);
 
 export default router;
