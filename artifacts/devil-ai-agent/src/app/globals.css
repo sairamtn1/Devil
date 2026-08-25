@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --devil-red: #c83d36;
+    --devil-dark: #050608;
+    --devil-shell: #0a0b0f;
+  }
+  
+  body {
+    @apply bg-devil-dark text-white antialiased;
+  }
+}
+
+@layer components {
+  .devil-shell {
+    @apply bg-devil-shell;
+  }
+  
+  .panel {
+    @apply border border-[#2a2d35] bg-[#12141a] rounded;
+  }
+  
+  .panel-hover {
+    @apply hover:border-[#3a3e47] transition-colors;
+  }
+  
+  .mono {
+    @apply font-mono;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-[#1a1c22];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[#3a3e47] rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#4a4e57];
+}
