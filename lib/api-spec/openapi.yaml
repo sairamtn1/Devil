@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 15.0.0
+  version: 16.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -20,6 +20,7 @@ info:
     Phase 13: Digital Workforce Platform - Departments, Workers, Recruitment, Performance Reviews, Skill Evolution, Analytics
     Phase 14: Research & Innovation Lab - Hypothesis Engine, Experimentation, Knowledge Acquisition, Benchmarking, IP Management, Breakthrough Detection
     Phase 15: World Model & Strategic Intelligence - Environment Mapping, Forecasting, Opportunity Detection, Risk Intelligence, Scenario Simulation, Knowledge Graph
+    Phase 16: Self-Evolution & Meta-Optimization - Self Analysis, Architecture Optimization, Agent Evolution, Capability Gaps, Simulation Sandbox, Meta Learning
   contact:
     name: DEVIL Team
 servers:
@@ -76,6 +77,8 @@ tags:
     description: Research & Innovation Lab - Hypotheses, Experiments, Discoveries, Knowledge
   - name: worldmodel
     description: World Model & Strategic Intelligence - Forecasting, Opportunities, Risks, Scenarios
+  - name: evolution
+    description: Self-Evolution & Meta-Optimization - Self Analysis, Optimization, Capability Growth
 paths:
   /healthz:
     get:
@@ -3347,6 +3350,140 @@ paths:
       responses:
         "200":
           description: Opportunity analysis
+  # Phase 16: Self-Evolution Paths
+  /evolution/evaluate:
+    post:
+      operationId: performSelfEvaluation
+      tags: [evolution]
+      summary: Perform self-evaluation
+      responses:
+        "201":
+          description: Evaluation complete
+  /evolution/evaluation:
+    get:
+      operationId: getLatestEvaluation
+      tags: [evolution]
+      summary: Get latest evaluation
+      responses:
+        "200":
+          description: Latest evaluation
+  /evolution/components:
+    get:
+      operationId: getComponents
+      tags: [evolution]
+      summary: Get components
+      responses:
+        "200":
+          description: Component list
+  /evolution/opportunities:
+    get:
+      operationId: getOpportunities
+      tags: [evolution]
+      summary: Get optimization opportunities
+      responses:
+        "200":
+          description: Opportunity list
+  /evolution/opportunities/identify:
+    post:
+      operationId: identifyOpportunities
+      tags: [evolution]
+      summary: Identify optimization opportunities
+      responses:
+        "201":
+          description: Opportunities identified
+  /evolution/simulate/:opportunityId:
+    post:
+      operationId: simulateChange
+      tags: [evolution]
+      summary: Simulate change
+      parameters:
+        - name: opportunityId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Simulation complete
+  /evolution/capabilities:
+    get:
+      operationId: getCapabilities
+      tags: [evolution]
+      summary: Get capabilities
+      responses:
+        "200":
+          description: Capability list
+  /evolution/capabilities/gaps:
+    get:
+      operationId: detectCapabilityGaps
+      tags: [evolution]
+      summary: Detect capability gaps
+      responses:
+        "200":
+          description: Gap analysis
+  /evolution/proposals:
+    get:
+      operationId: getProposals
+      tags: [evolution]
+      summary: Get evolution proposals
+      responses:
+        "200":
+          description: Proposal list
+  /evolution/proposal:
+    post:
+      operationId: createProposal
+      tags: [evolution]
+      summary: Create evolution proposal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                impact:
+                  type: string
+      responses:
+        "201":
+          description: Proposal created
+  /evolution/meta-learnings:
+    get:
+      operationId: getMetaLearnings
+      tags: [evolution]
+      summary: Get meta learnings
+      responses:
+        "200":
+          description: Meta learning list
+  /evolution/governance:
+    get:
+      operationId: getGovernancePolicy
+      tags: [evolution]
+      summary: Get governance policy
+      responses:
+        "200":
+          description: Governance policy
+  /evolution/dashboard:
+    get:
+      operationId: getEvolutionDashboard
+      tags: [evolution]
+      summary: Get evolution dashboard
+      responses:
+        "200":
+          description: Dashboard data
+  /evolution/report:
+    get:
+      operationId: getSelfAnalysisReport
+      tags: [evolution]
+      summary: Get self-analysis report
+      responses:
+        "200":
+          description: Full report
   # Phase 6: Memory System Paths
   /memory:
     get:

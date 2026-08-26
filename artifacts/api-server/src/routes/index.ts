@@ -21,6 +21,7 @@ import autonomousRouter from "./autonomous";
 import workforceRouter from "./workforce";
 import researchRouter from "./research";
 import worldmodelRouter from "./worldmodel";
+import evolutionRouter from "./evolution";
 
 const router: IRouter = Router();
 
@@ -42,6 +43,9 @@ router.use(researchRouter);
 
 // World Model & Strategic Intelligence Routes
 router.use(worldmodelRouter);
+
+// Self-Evolution Routes
+router.use(evolutionRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);
