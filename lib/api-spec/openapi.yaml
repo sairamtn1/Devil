@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 12.0.0
+  version: 13.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -17,6 +17,7 @@ info:
     Phase 10: Video Studio - Video Generation, Storyboard Engine, Commercial Templates, Provider Abstraction
     Phase 11: DEVIL Brain - Central Intelligence Core, Mission Analysis, Model Router, Reasoning Engine, Context Builder, Decision Center
     Phase 12: Autonomous Operations Center - Swarm Formation, Parallel Execution, Self-Healing, Continuous Optimization, Mission Replay, DEVIL Command Language
+    Phase 13: Digital Workforce Platform - Departments, Workers, Recruitment, Performance Reviews, Skill Evolution, Analytics
   contact:
     name: DEVIL Team
 servers:
@@ -67,6 +68,8 @@ tags:
     description: DEVIL Brain - Central Intelligence Core
   - name: autonomous
     description: Autonomous Operations Center - Swarm Agents, Mission Control, Self-Healing
+  - name: workforce
+    description: Digital Workforce Platform - Workers, Departments, Recruitment, Performance
 paths:
   /healthz:
     get:
@@ -2826,6 +2829,163 @@ paths:
       responses:
         "200":
           description: System statistics
+  # Phase 13: Digital Workforce Paths
+  /workforce/worker:
+    post:
+      operationId: createWorker
+      tags: [workforce]
+      summary: Create worker
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                role:
+                  type: string
+                department:
+                  type: string
+                level:
+                  type: string
+              required: [name, role, department]
+      responses:
+        "201":
+          description: Worker created
+  /workforce/worker/:id:
+    get:
+      operationId: getWorker
+      tags: [workforce]
+      summary: Get worker
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Worker details
+  /workforce/workers:
+    get:
+      operationId: listWorkers
+      tags: [workforce]
+      summary: List workers
+      parameters:
+        - name: department
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Worker list
+  /workforce/departments:
+    get:
+      operationId: listDepartments
+      tags: [workforce]
+      summary: List departments
+      responses:
+        "200":
+          description: Department list
+  /workforce/department/:type:
+    get:
+      operationId: getDepartment
+      tags: [workforce]
+      summary: Get department
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Department details
+  /workforce/recruitment:
+    post:
+      operationId: createRecruitment
+      tags: [workforce]
+      summary: Create recruitment request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                department:
+                  type: string
+                role:
+                  type: string
+                skills:
+                  type: array
+                  items:
+                    type: string
+              required: [department, role, skills]
+      responses:
+        "201":
+          description: Recruitment created
+  /workforce/review:
+    post:
+      operationId: conductReview
+      tags: [workforce]
+      summary: Conduct performance review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workerId:
+                  type: string
+                reviewerId:
+                  type: string
+                scores:
+                  type: object
+                feedback:
+                  type: string
+      responses:
+        "201":
+          description: Review conducted
+  /workforce/metrics:
+    get:
+      operationId: getWorkforceMetrics
+      tags: [workforce]
+      summary: Get organization metrics
+      responses:
+        "200":
+          description: Metrics
+  /workforce/top-performers:
+    get:
+      operationId: getTopPerformers
+      tags: [workforce]
+      summary: Get top performers
+      responses:
+        "200":
+          description: Top performers
+  /workforce/recommendations:
+    get:
+      operationId: getRecommendations
+      tags: [workforce]
+      summary: Get strategic recommendations
+      responses:
+        "200":
+          description: Recommendations
+  /workforce/report:
+    get:
+      operationId: getOrganizationalReport
+      tags: [workforce]
+      summary: Get organizational report
+      responses:
+        "200":
+          description: Full report
   # Phase 6: Memory System Paths
   /memory:
     get:

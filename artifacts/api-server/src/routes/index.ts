@@ -18,6 +18,7 @@ import imageRouter from "./image";
 import videoRouter from "./video";
 import brainRouter from "./brain";
 import autonomousRouter from "./autonomous";
+import workforceRouter from "./workforce";
 
 const router: IRouter = Router();
 
@@ -30,6 +31,9 @@ router.use(brainRouter);
 
 // Autonomous Operations Routes
 router.use(autonomousRouter);
+
+// Digital Workforce Routes
+router.use(workforceRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);
