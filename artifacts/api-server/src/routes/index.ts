@@ -22,6 +22,7 @@ import workforceRouter from "./workforce";
 import researchRouter from "./research";
 import worldmodelRouter from "./worldmodel";
 import evolutionRouter from "./evolution";
+import evolutionPlusRouter from "./evolution/evolution-plus";
 import multimodalRouter from "./multimodal";
 import ventureRouter from "./venture";
 import ecosystemRouter from "./ecosystem";
@@ -49,6 +50,9 @@ router.use(worldmodelRouter);
 
 // Self-Evolution Routes
 router.use(evolutionRouter);
+
+// Autonomous Evolution Routes (Phase 20)
+router.use(evolutionPlusRouter);
 
 // Multimodal Cognitive Routes
 router.use(multimodalRouter);

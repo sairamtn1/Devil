@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 19.0.0
+  version: 20.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -24,6 +24,7 @@ info:
     Phase 17: Unified Multimodal Cognitive Engine - Cross-Modal Reasoning, Semantic Fusion, Visual Intelligence, Cognitive Graph, Multimodal Memory, Understanding Score
     Phase 18: Autonomous Venture Factory - Opportunity Discovery, Venture Creation, Product Factory, Growth Engine, Portfolio Management, Business Intelligence
     Phase 19: Ecosystem & Marketplace Platform - Plugin Marketplace, Agent Marketplace, Workflow Marketplace, Template System, Developer Platform, Governance, Revenue Layer
+    Phase 20: Autonomous Evolution & Self-Improvement - Learning Engine, Capability Analyzer, Weakness Detector, Strategy Engine, Experiments, DEVIL Genome, Evolution Score
   contact:
     name: DEVIL Team
 servers:
@@ -82,6 +83,8 @@ tags:
     description: World Model & Strategic Intelligence - Forecasting, Opportunities, Risks, Scenarios
   - name: evolution
     description: Self-Evolution & Meta-Optimization - Self Analysis, Optimization, Capability Growth
+  - name: evolve
+    description: Autonomous Evolution & Self-Improvement - Learning, Weakness Detection, Genome, Experiments
   - name: multimodal
     description: Unified Multimodal Cognitive - Cross-Modal Reasoning, Semantic Fusion, Cognitive Graph
   - name: venture
@@ -3857,6 +3860,144 @@ paths:
       responses:
         "200":
           description: Dashboard data
+  # Phase 20: Autonomous Evolution Paths
+  /evolution/learn/outcome:
+    post:
+      operationId: recordMissionOutcome
+      tags: [evolve]
+      summary: Record mission outcome
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Outcome recorded
+  /evolution/learn/history:
+    get:
+      operationId: getLearningHistory
+      tags: [evolve]
+      summary: Get learning history
+      responses:
+        "200":
+          description: Learning history
+  /evolution/learn/patterns:
+    get:
+      operationId: getPatterns
+      tags: [evolve]
+      summary: Get learning patterns
+      responses:
+        "200":
+          description: Patterns list
+  /evolution/capabilities/analyze:
+    get:
+      operationId: analyzeCapabilities
+      tags: [evolve]
+      summary: Analyze capabilities
+      responses:
+        "200":
+          description: Capability analysis
+  /evolution/weaknesses:
+    get:
+      operationId: detectWeaknesses
+      tags: [evolve]
+      summary: Detect weaknesses
+      responses:
+        "200":
+          description: Weakness list
+  /evolution/optimize/generate:
+    post:
+      operationId: generateProposals
+      tags: [evolve]
+      summary: Generate optimization proposals
+      responses:
+        "200":
+          description: Proposals generated
+  /evolution/optimize/proposals:
+    get:
+      operationId: getProposals
+      tags: [evolve]
+      summary: Get proposals
+      responses:
+        "200":
+          description: Proposal list
+  /evolution/experiment:
+    post:
+      operationId: createExperiment
+      tags: [evolve]
+      summary: Create experiment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                hypothesis:
+                  type: string
+      responses:
+        "201":
+          description: Experiment created
+  /evolution/experiments:
+    get:
+      operationId: getExperiments
+      tags: [evolve]
+      summary: Get experiments
+      responses:
+        "200":
+          description: Experiment list
+  /evolution/genome:
+    get:
+      operationId: getGenome
+      tags: [evolve]
+      summary: Get DEVIL Genome
+      responses:
+        "200":
+          description: Genome data
+  /evolution/retrospective/:missionId:
+    get:
+      operationId: getRetrospective
+      tags: [evolve]
+      summary: Get mission retrospective
+      parameters:
+        - name: missionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Retrospective
+  /evolution/score:
+    get:
+      operationId: getEvolutionScore
+      tags: [evolve]
+      summary: Get evolution score
+      responses:
+        "200":
+          description: Evolution score
+  /evolution/memory:
+    get:
+      operationId: getEvolutionMemory
+      tags: [evolve]
+      summary: Get evolution memory
+      responses:
+        "200":
+          description: Evolution memory
+  /evolution/dashboard:
+    get:
+      operationId: getEvolutionDashboard
+      tags: [evolve]
+      summary: Get evolution dashboard
+      responses:
+        "200":
+          description: Dashboard
   # Phase 6: Memory System Paths
   /memory:
     get:
