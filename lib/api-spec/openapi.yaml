@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 14.0.0
+  version: 15.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -19,6 +19,7 @@ info:
     Phase 12: Autonomous Operations Center - Swarm Formation, Parallel Execution, Self-Healing, Continuous Optimization, Mission Replay, DEVIL Command Language
     Phase 13: Digital Workforce Platform - Departments, Workers, Recruitment, Performance Reviews, Skill Evolution, Analytics
     Phase 14: Research & Innovation Lab - Hypothesis Engine, Experimentation, Knowledge Acquisition, Benchmarking, IP Management, Breakthrough Detection
+    Phase 15: World Model & Strategic Intelligence - Environment Mapping, Forecasting, Opportunity Detection, Risk Intelligence, Scenario Simulation, Knowledge Graph
   contact:
     name: DEVIL Team
 servers:
@@ -73,6 +74,8 @@ tags:
     description: Digital Workforce Platform - Workers, Departments, Recruitment, Performance
   - name: research
     description: Research & Innovation Lab - Hypotheses, Experiments, Discoveries, Knowledge
+  - name: worldmodel
+    description: World Model & Strategic Intelligence - Forecasting, Opportunities, Risks, Scenarios
 paths:
   /healthz:
     get:
@@ -3195,6 +3198,155 @@ paths:
       responses:
         "201":
           description: IP registered
+  # Phase 15: World Model & Strategic Intelligence Paths
+  /strategic/summary:
+    get:
+      operationId: getWorldStateSummary
+      tags: [worldmodel]
+      summary: Get world state summary
+      responses:
+        "200":
+          description: World state summary
+  /strategic/metrics:
+    get:
+      operationId: getStrategicMetrics
+      tags: [worldmodel]
+      summary: Get strategic metrics
+      responses:
+        "200":
+          description: Strategic metrics
+  /strategic/trends:
+    get:
+      operationId: getTrends
+      tags: [worldmodel]
+      summary: Get trends
+      responses:
+        "200":
+          description: Trend list
+  /strategic/opportunities:
+    get:
+      operationId: getOpportunities
+      tags: [worldmodel]
+      summary: Get opportunities
+      responses:
+        "200":
+          description: Opportunity list
+  /strategic/risks:
+    get:
+      operationId: getRisks
+      tags: [worldmodel]
+      summary: Get risks
+      responses:
+        "200":
+          description: Risk list
+  /strategic/risks/predict:
+    get:
+      operationId: predictRisks
+      tags: [worldmodel]
+      summary: Predict risks
+      responses:
+        "200":
+          description: Predicted risks
+  /strategic/scenarios:
+    post:
+      operationId: generateScenarios
+      tags: [worldmodel]
+      summary: Generate scenarios
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject:
+                  type: string
+                conditions:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "201":
+          description: Scenarios generated
+    get:
+      operationId: getScenarios
+      tags: [worldmodel]
+      summary: Get scenarios
+      responses:
+        "200":
+          description: Scenario list
+  /strategic/forecasts:
+    get:
+      operationId: getForecasts
+      tags: [worldmodel]
+      summary: Get forecasts
+      responses:
+        "200":
+          description: Forecast list
+  /strategic/forecast:
+    post:
+      operationId: createForecast
+      tags: [worldmodel]
+      summary: Create forecast
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject:
+                  type: string
+                category:
+                  type: string
+                prediction:
+                  type: string
+                confidence:
+                  type: number
+                timeframe:
+                  type: string
+      responses:
+        "201":
+          description: Forecast created
+  /strategic/decision:
+    post:
+      operationId: makeDecision
+      tags: [worldmodel]
+      summary: Make strategic decision
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                options:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "201":
+          description: Decision made
+  /strategic/report:
+    get:
+      operationId: getStrategicReport
+      tags: [worldmodel]
+      summary: Get strategic report
+      responses:
+        "200":
+          description: Strategic report
+  /strategic/opportunities/analyze:
+    get:
+      operationId: analyzeOpportunities
+      tags: [worldmodel]
+      summary: Analyze opportunities
+      responses:
+        "200":
+          description: Opportunity analysis
   # Phase 6: Memory System Paths
   /memory:
     get:

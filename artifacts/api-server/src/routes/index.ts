@@ -20,6 +20,7 @@ import brainRouter from "./brain";
 import autonomousRouter from "./autonomous";
 import workforceRouter from "./workforce";
 import researchRouter from "./research";
+import worldmodelRouter from "./worldmodel";
 
 const router: IRouter = Router();
 
@@ -38,6 +39,9 @@ router.use(workforceRouter);
 
 // Research & Innovation Routes
 router.use(researchRouter);
+
+// World Model & Strategic Intelligence Routes
+router.use(worldmodelRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);
