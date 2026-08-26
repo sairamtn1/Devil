@@ -23,6 +23,7 @@ import researchRouter from "./research";
 import worldmodelRouter from "./worldmodel";
 import evolutionRouter from "./evolution";
 import multimodalRouter from "./multimodal";
+import ventureRouter from "./venture";
 
 const router: IRouter = Router();
 
@@ -50,6 +51,9 @@ router.use(evolutionRouter);
 
 // Multimodal Cognitive Routes
 router.use(multimodalRouter);
+
+// Venture Factory Routes
+router.use(ventureRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);

@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 17.0.0
+  version: 18.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -22,6 +22,7 @@ info:
     Phase 15: World Model & Strategic Intelligence - Environment Mapping, Forecasting, Opportunity Detection, Risk Intelligence, Scenario Simulation, Knowledge Graph
     Phase 16: Self-Evolution & Meta-Optimization - Self Analysis, Architecture Optimization, Agent Evolution, Capability Gaps, Simulation Sandbox, Meta Learning
     Phase 17: Unified Multimodal Cognitive Engine - Cross-Modal Reasoning, Semantic Fusion, Visual Intelligence, Cognitive Graph, Multimodal Memory, Understanding Score
+    Phase 18: Autonomous Venture Factory - Opportunity Discovery, Venture Creation, Product Factory, Growth Engine, Portfolio Management, Business Intelligence
   contact:
     name: DEVIL Team
 servers:
@@ -82,6 +83,8 @@ tags:
     description: Self-Evolution & Meta-Optimization - Self Analysis, Optimization, Capability Growth
   - name: multimodal
     description: Unified Multimodal Cognitive - Cross-Modal Reasoning, Semantic Fusion, Cognitive Graph
+  - name: venture
+    description: Venture Factory - Opportunity Discovery, Ventures, Products, Portfolio, Growth
 paths:
   /healthz:
     get:
@@ -3616,6 +3619,138 @@ paths:
       responses:
         "200":
           description: Metrics
+  # Phase 18: Venture Factory Paths
+  /venture/opportunities:
+    get:
+      operationId: getOpportunities
+      tags: [venture]
+      summary: Get opportunities
+      responses:
+        "200":
+          description: Opportunity list
+  /venture/opportunity:
+    post:
+      operationId: createOpportunity
+      tags: [venture]
+      summary: Create opportunity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+      responses:
+        "201":
+          description: Opportunity created
+  /venture/ventures:
+    get:
+      operationId: getVentures
+      tags: [venture]
+      summary: Get ventures
+      responses:
+        "200":
+          description: Venture list
+  /venture/venture:
+    post:
+      operationId: createVenture
+      tags: [venture]
+      summary: Create venture
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        "201":
+          description: Venture created
+  /venture/venture/:id:
+    get:
+      operationId: getVenture
+      tags: [venture]
+      summary: Get venture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Venture details
+  /venture/venture/:id/validate:
+    post:
+      operationId: validateVenture
+      tags: [venture]
+      summary: Validate venture
+      responses:
+        "200":
+          description: Validation result
+  /venture/venture/:id/simulate:
+    post:
+      operationId: simulateVenture
+      tags: [venture]
+      summary: Simulate venture
+      responses:
+        "200":
+          description: Simulation result
+  /venture/products:
+    get:
+      operationId: getProducts
+      tags: [venture]
+      summary: Get products
+      responses:
+        "200":
+          description: Product list
+  /venture/product:
+    post:
+      operationId: createProduct
+      tags: [venture]
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ventureId:
+                  type: string
+                name:
+                  type: string
+                type:
+                  type: string
+      responses:
+        "201":
+          description: Product created
+  /venture/portfolio:
+    get:
+      operationId: getPortfolio
+      tags: [venture]
+      summary: Get portfolio summary
+      responses:
+        "200":
+          description: Portfolio summary
+  /venture/dashboard:
+    get:
+      operationId: getVentureDashboard
+      tags: [venture]
+      summary: Get venture dashboard
+      responses:
+        "200":
+          description: Dashboard data
   # Phase 6: Memory System Paths
   /memory:
     get:
