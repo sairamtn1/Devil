@@ -1,18 +1,19 @@
 openapi: 3.1.0
 info:
   title: VOLGA OS API
-  version: 1.1.0
+  version: 1.2.0
   description: |
-    VOLGA OS v1.1 - Self-Expanding Ecosystem
+    VOLGA OS v1.2 - Public Beta
     
     The next generation of intelligent operations platform.
     
-    Phase 26: Agent Factory & Ecosystem Extension
-    - Agent Factory: Create new agents dynamically
-    - Plugin Marketplace: Extend functionality
-    - Voice Layer: Voice commands and control
-    - Real-Time Monitoring: System monitoring
-    - Multi-Device Sync: Cross-device synchronization
+    Phase 27: Public Beta Launch
+    - Authentication System
+    - User Onboarding
+    - Beta Program
+    - Analytics & Monitoring
+    - Admin Console
+    - Deployment Infrastructure
   contact:
     name: VOLGA OS Team
 servers:
@@ -91,6 +92,8 @@ tags:
     description: VOLGA OS v1.0 - Unified AI Operating System, Mission Center, Health, Readiness
   - name: factory
     description: Agent Factory - Templates, Custom Agents, Plugins, Workflows, Voice, Monitoring, Devices
+  - name: public-beta
+    description: Public Beta - Authentication, Onboarding, Beta Program, Analytics, Admin
 paths:
   /healthz:
     get:
@@ -4748,6 +4751,71 @@ paths:
       operationId: getFactoryDashboard
       tags: [factory]
       summary: Factory dashboard
+      responses:
+        "200":
+          description: Dashboard
+  # Public Beta API
+  /auth/register:
+    post:
+      operationId: register
+      tags: [public-beta]
+      summary: Register user
+      responses:
+        "201":
+          description: Created
+  /auth/login:
+    post:
+      operationId: login
+      tags: [public-beta]
+      summary: Login
+      responses:
+        "200":
+          description: Success
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [public-beta]
+      summary: Current user
+      responses:
+        "200":
+          description: User
+  /beta/waitlist:
+    post:
+      operationId: joinWaitlist
+      tags: [public-beta]
+      summary: Join waitlist
+      responses:
+        "201":
+          description: Joined
+  /beta/feedback:
+    post:
+      operationId: submitFeedback
+      tags: [public-beta]
+      summary: Submit feedback
+      responses:
+        "201":
+          description: Submitted
+  /analytics:
+    get:
+      operationId: getAnalytics
+      tags: [public-beta]
+      summary: Get analytics
+      responses:
+        "200":
+          description: Analytics
+  /errors:
+    post:
+      operationId: logError
+      tags: [public-beta]
+      summary: Log error
+      responses:
+        "201":
+          description: Logged
+  /admin/dashboard:
+    get:
+      operationId: getAdminDashboard
+      tags: [public-beta]
+      summary: Admin dashboard
       responses:
         "200":
           description: Dashboard

@@ -32,6 +32,7 @@ import simulationRouter from "./simulation";
 import enterpriseRouter from "./enterprise";
 import volgaRouter from "./volga";
 import factoryRouter from "./factory-ext";
+import publicBetaRouter from "./public-beta";
 
 const router: IRouter = Router();
 
@@ -84,8 +85,11 @@ router.use(enterpriseRouter);
 // VOLGA OS Routes
 router.use(volgaRouter);
 
-// Agent Factory & Ecosystem Routes (Phase 26)
+// Agent Factory & Ecosystem Routes
 router.use(factoryRouter);
+
+// Public Beta Routes (Phase 27)
+router.use(publicBetaRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);
