@@ -24,6 +24,7 @@ import worldmodelRouter from "./worldmodel";
 import evolutionRouter from "./evolution";
 import multimodalRouter from "./multimodal";
 import ventureRouter from "./venture";
+import ecosystemRouter from "./ecosystem";
 
 const router: IRouter = Router();
 
@@ -54,6 +55,9 @@ router.use(multimodalRouter);
 
 // Venture Factory Routes
 router.use(ventureRouter);
+
+// Ecosystem Platform Routes
+router.use(ecosystemRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);

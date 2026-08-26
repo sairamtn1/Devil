@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 18.0.0
+  version: 19.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -23,6 +23,7 @@ info:
     Phase 16: Self-Evolution & Meta-Optimization - Self Analysis, Architecture Optimization, Agent Evolution, Capability Gaps, Simulation Sandbox, Meta Learning
     Phase 17: Unified Multimodal Cognitive Engine - Cross-Modal Reasoning, Semantic Fusion, Visual Intelligence, Cognitive Graph, Multimodal Memory, Understanding Score
     Phase 18: Autonomous Venture Factory - Opportunity Discovery, Venture Creation, Product Factory, Growth Engine, Portfolio Management, Business Intelligence
+    Phase 19: Ecosystem & Marketplace Platform - Plugin Marketplace, Agent Marketplace, Workflow Marketplace, Template System, Developer Platform, Governance, Revenue Layer
   contact:
     name: DEVIL Team
 servers:
@@ -85,6 +86,8 @@ tags:
     description: Unified Multimodal Cognitive - Cross-Modal Reasoning, Semantic Fusion, Cognitive Graph
   - name: venture
     description: Venture Factory - Opportunity Discovery, Ventures, Products, Portfolio, Growth
+  - name: ecosystem
+    description: Ecosystem Platform - Marketplace, Developers, Assets, Integrations, Governance
 paths:
   /healthz:
     get:
@@ -3748,6 +3751,109 @@ paths:
       operationId: getVentureDashboard
       tags: [venture]
       summary: Get venture dashboard
+      responses:
+        "200":
+          description: Dashboard data
+  # Phase 19: Ecosystem Platform Paths
+  /ecosystem/developer:
+    post:
+      operationId: registerDeveloper
+      tags: [ecosystem]
+      summary: Register developer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+      responses:
+        "201":
+          description: Developer registered
+  /ecosystem/developers:
+    get:
+      operationId: getDevelopers
+      tags: [ecosystem]
+      summary: Get developers
+      responses:
+        "200":
+          description: Developer list
+  /ecosystem/asset:
+    post:
+      operationId: createAsset
+      tags: [ecosystem]
+      summary: Create asset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                developerId:
+                  type: string
+      responses:
+        "201":
+          description: Asset created
+  /ecosystem/assets:
+    get:
+      operationId: getAssets
+      tags: [ecosystem]
+      summary: Get assets
+      responses:
+        "200":
+          description: Asset list
+  /ecosystem/search:
+    get:
+      operationId: searchAssets
+      tags: [ecosystem]
+      summary: Search assets
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Search results
+  /ecosystem/trending:
+    get:
+      operationId: getTrendingAssets
+      tags: [ecosystem]
+      summary: Get trending assets
+      responses:
+        "200":
+          description: Trending list
+  /ecosystem/integrations:
+    get:
+      operationId: getIntegrations
+      tags: [ecosystem]
+      summary: Get integrations
+      responses:
+        "200":
+          description: Integration list
+  /ecosystem/metrics:
+    get:
+      operationId: getEcosystemMetrics
+      tags: [ecosystem]
+      summary: Get ecosystem metrics
+      responses:
+        "200":
+          description: Ecosystem metrics
+  /ecosystem/dashboard:
+    get:
+      operationId: getEcosystemDashboard
+      tags: [ecosystem]
+      summary: Get ecosystem dashboard
       responses:
         "200":
           description: Dashboard data
