@@ -1,12 +1,12 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 23.0.0
+  version: 24.0.0
   description: |
     DEVIL AI Agent Platform API
     
-    Phase 1-22: Core systems (Self Modification, Collective Intelligence, etc.)
-    Phase 23: World Simulation Engine - DEVIL predicts outcomes before execution.
+    Phase 1-23: Core systems (Simulation, Self-Modification, etc.)
+    Phase 24: Enterprise Command Center - Organization, Workspace, RBAC, Audit, Governance
   contact:
     name: DEVIL Team
 servers:
@@ -79,6 +79,8 @@ tags:
     description: Self Modification Engine - Improvement, Sandbox, Validation, Rollback
   - name: simulation
     description: World Simulation - Mission/Business Simulators, Scenario Generator, Decision Support
+  - name: enterprise
+    description: Enterprise Command Center - Organizations, Workspaces, Teams, RBAC, Audit, Governance
 paths:
   /healthz:
     get:
@@ -4500,6 +4502,111 @@ paths:
     get:
       operationId: getSimulationDashboard
       tags: [simulation]
+      summary: Dashboard
+      responses:
+        "200":
+          description: Dashboard
+  # Enterprise API
+  /enterprise/organization:
+    post:
+      operationId: createOrganization
+      tags: [enterprise]
+      summary: Create organization
+      responses:
+        "201":
+          description: Created
+  /enterprise/organizations:
+    get:
+      operationId: getOrganizations
+      tags: [enterprise]
+      summary: List organizations
+      responses:
+        "200":
+          description: List
+  /enterprise/workspace:
+    post:
+      operationId: createWorkspace
+      tags: [enterprise]
+      summary: Create workspace
+      responses:
+        "201":
+          description: Created
+  /enterprise/workspaces:
+    get:
+      operationId: getWorkspaces
+      tags: [enterprise]
+      summary: List workspaces
+      responses:
+        "200":
+          description: List
+  /enterprise/team:
+    post:
+      operationId: createTeam
+      tags: [enterprise]
+      summary: Create team
+      responses:
+        "201":
+          description: Created
+  /enterprise/teams:
+    get:
+      operationId: getTeams
+      tags: [enterprise]
+      summary: List teams
+      responses:
+        "200":
+          description: List
+  /enterprise/user:
+    post:
+      operationId: createUser
+      tags: [enterprise]
+      summary: Create user
+      responses:
+        "201":
+          description: Created
+  /enterprise/users:
+    get:
+      operationId: getUsers
+      tags: [enterprise]
+      summary: List users
+      responses:
+        "200":
+          description: List
+  /enterprise/audit:
+    get:
+      operationId: getAuditLog
+      tags: [enterprise]
+      summary: Get audit log
+      responses:
+        "200":
+          description: Audit entries
+  /enterprise/policy:
+    post:
+      operationId: createPolicy
+      tags: [enterprise]
+      summary: Create policy
+      responses:
+        "201":
+          description: Created
+  /enterprise/policies:
+    get:
+      operationId: getPolicies
+      tags: [enterprise]
+      summary: List policies
+      responses:
+        "200":
+          description: List
+  /enterprise/resources:
+    get:
+      operationId: getResources
+      tags: [enterprise]
+      summary: Get resources
+      responses:
+        "200":
+          description: Resources
+  /enterprise/dashboard:
+    get:
+      operationId: getEnterpriseDashboard
+      tags: [enterprise]
       summary: Dashboard
       responses:
         "200":
