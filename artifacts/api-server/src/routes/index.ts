@@ -28,6 +28,7 @@ import ventureRouter from "./venture";
 import ecosystemRouter from "./ecosystem";
 import collectiveRouter from "./collective";
 import selfModifyRouter from "./self-modify";
+import simulationRouter from "./simulation";
 
 const router: IRouter = Router();
 
@@ -68,8 +69,11 @@ router.use(ecosystemRouter);
 // Collective Intelligence Routes
 router.use(collectiveRouter);
 
-// Self Modification Routes (Phase 22)
+// Self Modification Routes
 router.use(selfModifyRouter);
+
+// World Simulation Routes (Phase 23)
+router.use(simulationRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);

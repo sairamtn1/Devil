@@ -1,12 +1,12 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 22.0.0
+  version: 23.0.0
   description: |
     DEVIL AI Agent Platform API
     
-    Phase 1-21: Core agents and systems (Collective Intelligence, Ecosystem, Venture Factory, etc.)
-    Phase 22: Self Modification Engine - DEVIL can safely improve itself.
+    Phase 1-22: Core systems (Self Modification, Collective Intelligence, etc.)
+    Phase 23: World Simulation Engine - DEVIL predicts outcomes before execution.
   contact:
     name: DEVIL Team
 servers:
@@ -77,6 +77,8 @@ tags:
     description: Collective Intelligence - Agent Network, Shared Knowledge, Cross-Agent Learning, Consensus, Reputation
   - name: self-modify
     description: Self Modification Engine - Improvement, Sandbox, Validation, Rollback
+  - name: simulation
+    description: World Simulation - Mission/Business Simulators, Scenario Generator, Decision Support
 paths:
   /healthz:
     get:
@@ -4449,6 +4451,55 @@ paths:
     get:
       operationId: getSelfModifyDashboard
       tags: [self-modify]
+      summary: Dashboard
+      responses:
+        "200":
+          description: Dashboard
+  # Simulation API
+  /simulation/mission:
+    post:
+      operationId: simulateMission
+      tags: [simulation]
+      summary: Simulate mission
+      responses:
+        "201":
+          description: Simulation created
+  /simulation/business:
+    post:
+      operationId: simulateBusiness
+      tags: [simulation]
+      summary: Simulate business
+      responses:
+        "201":
+          description: Simulation created
+  /simulation/scenario:
+    post:
+      operationId: generateScenario
+      tags: [simulation]
+      summary: Generate scenarios
+      responses:
+        "200":
+          description: Scenarios generated
+  /simulation/decision:
+    post:
+      operationId: simulateDecision
+      tags: [simulation]
+      summary: Simulate decision
+      responses:
+        "201":
+          description: Decision simulated
+  /simulation/accuracy:
+    get:
+      operationId: getAccuracy
+      tags: [simulation]
+      summary: Get prediction accuracy
+      responses:
+        "200":
+          description: Accuracy metrics
+  /simulation/dashboard:
+    get:
+      operationId: getSimulationDashboard
+      tags: [simulation]
       summary: Dashboard
       responses:
         "200":
