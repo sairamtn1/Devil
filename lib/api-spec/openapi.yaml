@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 13.0.0
+  version: 14.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -18,6 +18,7 @@ info:
     Phase 11: DEVIL Brain - Central Intelligence Core, Mission Analysis, Model Router, Reasoning Engine, Context Builder, Decision Center
     Phase 12: Autonomous Operations Center - Swarm Formation, Parallel Execution, Self-Healing, Continuous Optimization, Mission Replay, DEVIL Command Language
     Phase 13: Digital Workforce Platform - Departments, Workers, Recruitment, Performance Reviews, Skill Evolution, Analytics
+    Phase 14: Research & Innovation Lab - Hypothesis Engine, Experimentation, Knowledge Acquisition, Benchmarking, IP Management, Breakthrough Detection
   contact:
     name: DEVIL Team
 servers:
@@ -70,6 +71,8 @@ tags:
     description: Autonomous Operations Center - Swarm Agents, Mission Control, Self-Healing
   - name: workforce
     description: Digital Workforce Platform - Workers, Departments, Recruitment, Performance
+  - name: research
+    description: Research & Innovation Lab - Hypotheses, Experiments, Discoveries, Knowledge
 paths:
   /healthz:
     get:
@@ -2986,6 +2989,212 @@ paths:
       responses:
         "200":
           description: Full report
+  # Phase 14: Research & Innovation Lab Paths
+  /research/project:
+    post:
+      operationId: createResearchProject
+      tags: [research]
+      summary: Create research project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                division:
+                  type: string
+              required: [title, description, division]
+      responses:
+        "201":
+          description: Project created
+  /research/project/:id:
+    get:
+      operationId: getResearchProject
+      tags: [research]
+      summary: Get research project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project details
+  /research/projects:
+    get:
+      operationId: listResearchProjects
+      tags: [research]
+      summary: List research projects
+      responses:
+        "200":
+          description: Project list
+  /research/project/:id/hypotheses:
+    post:
+      operationId: generateHypotheses
+      tags: [research]
+      summary: Generate hypotheses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                problem:
+                  type: string
+              required: [problem]
+      responses:
+        "201":
+          description: Hypotheses generated
+  /research/experiment:
+    post:
+      operationId: createExperiment
+      tags: [research]
+      summary: Create experiment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hypothesisId:
+                  type: string
+                title:
+                  type: string
+              required: [hypothesisId, title]
+      responses:
+        "201":
+          description: Experiment created
+  /research/experiment/:id/run:
+    post:
+      operationId: runExperiment
+      tags: [research]
+      summary: Run experiment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Experiment running
+  /research/knowledge:
+    post:
+      operationId: acquireKnowledge
+      tags: [research]
+      summary: Acquire knowledge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                title:
+                  type: string
+                content:
+                  type: string
+                source:
+                  type: string
+      responses:
+        "201":
+          description: Knowledge acquired
+  /research/knowledge/search:
+    get:
+      operationId: searchKnowledge
+      tags: [research]
+      summary: Search knowledge
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Search results
+  /research/breakthroughs:
+    get:
+      operationId: getBreakthroughs
+      tags: [research]
+      summary: Get breakthroughs
+      responses:
+        "200":
+          description: Breakthrough discoveries
+  /research/benchmark:
+    post:
+      operationId: setBenchmark
+      tags: [research]
+      summary: Set benchmark
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                metrics:
+                  type: object
+      responses:
+        "201":
+          description: Benchmark set
+  /research/analytics:
+    get:
+      operationId: getResearchAnalytics
+      tags: [research]
+      summary: Get research analytics
+      responses:
+        "200":
+          description: Research analytics
+  /research/report:
+    get:
+      operationId: getResearchReport
+      tags: [research]
+      summary: Get research report
+      responses:
+        "200":
+          description: Full report
+  /research/ip:
+    post:
+      operationId: registerIP
+      tags: [research]
+      summary: Register intellectual property
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                type:
+                  type: string
+                description:
+                  type: string
+                owner:
+                  type: string
+      responses:
+        "201":
+          description: IP registered
   # Phase 6: Memory System Paths
   /memory:
     get:
