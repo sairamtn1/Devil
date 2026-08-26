@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 11.0.0
+  version: 12.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -16,6 +16,7 @@ info:
     Phase 9: Image Studio - Image Generation, Logo Design, Brand System, Asset Library, Provider Abstraction
     Phase 10: Video Studio - Video Generation, Storyboard Engine, Commercial Templates, Provider Abstraction
     Phase 11: DEVIL Brain - Central Intelligence Core, Mission Analysis, Model Router, Reasoning Engine, Context Builder, Decision Center
+    Phase 12: Autonomous Operations Center - Swarm Formation, Parallel Execution, Self-Healing, Continuous Optimization, Mission Replay, DEVIL Command Language
   contact:
     name: DEVIL Team
 servers:
@@ -64,6 +65,8 @@ tags:
     description: Video Studio - generation and asset management
   - name: brain
     description: DEVIL Brain - Central Intelligence Core
+  - name: autonomous
+    description: Autonomous Operations Center - Swarm Agents, Mission Control, Self-Healing
 paths:
   /healthz:
     get:
@@ -2596,6 +2599,233 @@ paths:
       responses:
         "200":
           description: Recommendations
+  # Phase 12: Autonomous Operations Paths
+  /autonomous/mission:
+    post:
+      operationId: createAutonomousMission
+      tags: [autonomous]
+      summary: Create autonomous mission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                objective:
+                  type: string
+                constraints:
+                  type: array
+                  items:
+                    type: string
+                risks:
+                  type: array
+                  items:
+                    type: object
+              required: [objective]
+      responses:
+        "201":
+          description: Mission created
+  /autonomous/mission/:id:
+    get:
+      operationId: getAutonomousMission
+      tags: [autonomous]
+      summary: Get mission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission details
+  /autonomous/missions:
+    get:
+      operationId: listAutonomousMissions
+      tags: [autonomous]
+      summary: List missions
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission list
+  /autonomous/mission/:id/execute:
+    post:
+      operationId: executeAutonomousMission
+      tags: [autonomous]
+      summary: Execute mission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "202":
+          description: Execution started
+  /autonomous/mission/:id/plan:
+    post:
+      operationId: planAutonomousMission
+      tags: [autonomous]
+      summary: Plan mission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission plan
+  /autonomous/mission/:id/swarm:
+    post:
+      operationId: spawnSwarm
+      tags: [autonomous]
+      summary: Spawn swarm agents
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                agents:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "201":
+          description: Swarm spawned
+    get:
+      operationId: getSwarm
+      tags: [autonomous]
+      summary: Get swarm agents
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Swarm agents
+  /autonomous/mission/:id/optimize:
+    post:
+      operationId: optimizeMission
+      tags: [autonomous]
+      summary: Optimize mission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Optimizations
+  /autonomous/mission/:id/metrics:
+    get:
+      operationId: getMissionMetrics
+      tags: [autonomous]
+      summary: Get mission metrics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mission metrics
+  /autonomous/failure:
+    post:
+      operationId: reportFailure
+      tags: [autonomous]
+      summary: Report failure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                taskId:
+                  type: string
+                agentId:
+                  type: string
+                error:
+                  type: string
+              required: [taskId, agentId, error]
+      responses:
+        "201":
+          description: Failure reported
+  /autonomous/security/check:
+    post:
+      operationId: checkActionRisk
+      tags: [autonomous]
+      summary: Check action risk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+              required: [action]
+      responses:
+        "200":
+          description: Risk assessment
+  /autonomous/replay:
+    get:
+      operationId: getReplayLog
+      tags: [autonomous]
+      summary: Get replay log
+      parameters:
+        - name: missionId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Replay events
+  /autonomous/dcl/parse:
+    post:
+      operationId: parseDCL
+      tags: [autonomous]
+      summary: Parse DEVIL Command Language
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                command:
+                  type: string
+              required: [command]
+      responses:
+        "200":
+          description: Parsed commands
+  /autonomous/stats:
+    get:
+      operationId: getAutonomousStats
+      tags: [autonomous]
+      summary: Get system stats
+      responses:
+        "200":
+          description: System statistics
   # Phase 6: Memory System Paths
   /memory:
     get:

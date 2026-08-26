@@ -17,6 +17,7 @@ import orchestratorRouter from "./orchestrator";
 import imageRouter from "./image";
 import videoRouter from "./video";
 import brainRouter from "./brain";
+import autonomousRouter from "./autonomous";
 
 const router: IRouter = Router();
 
@@ -26,6 +27,9 @@ router.use(aiRouter);
 
 // DEVIL Brain Routes
 router.use(brainRouter);
+
+// Autonomous Operations Routes
+router.use(autonomousRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);
