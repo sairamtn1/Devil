@@ -1,12 +1,12 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 21.0.0
+  version: 22.0.0
   description: |
     DEVIL AI Agent Platform API
     
-    Phase 1-20: Core agents and systems (Control Plane, Executor, Brain, Memory, Research, Knowledge, Evolution, Marketplace, Architect, Coding, Image, Video, Deployment, GitHub, etc.)
-    Phase 21: Collective Intelligence Platform - Unified collective intelligence connecting all agents for shared learning, knowledge propagation, collaboration, consensus, and unified behavior.
+    Phase 1-21: Core agents and systems (Collective Intelligence, Ecosystem, Venture Factory, etc.)
+    Phase 22: Self Modification Engine - DEVIL can safely improve itself.
   contact:
     name: DEVIL Team
 servers:
@@ -75,6 +75,8 @@ tags:
     description: Ecosystem Platform - Marketplace, Developers, Assets, Integrations, Governance
   - name: collective
     description: Collective Intelligence - Agent Network, Shared Knowledge, Cross-Agent Learning, Consensus, Reputation
+  - name: self-modify
+    description: Self Modification Engine - Improvement, Sandbox, Validation, Rollback
 paths:
   /healthz:
     get:
@@ -4380,6 +4382,77 @@ paths:
       responses:
         "200":
           description: Events
+  # Self Modification API
+  /self-modify/analyze:
+    post:
+      operationId: analyzeWeaknesses
+      tags: [self-modify]
+      summary: Analyze weaknesses
+      responses:
+        "200":
+          description: Improvements
+  /self-modify/plan:
+    post:
+      operationId: planImprovement
+      tags: [self-modify]
+      summary: Plan improvement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Planned
+  /self-modify/sandbox:
+    post:
+      operationId: createSandbox
+      tags: [self-modify]
+      summary: Create sandbox
+      responses:
+        "201":
+          description: Created
+  /self-modify/validate/:improvementId:
+    post:
+      operationId: validateModification
+      tags: [self-modify]
+      summary: Validate
+      responses:
+        "200":
+          description: Validated
+  /self-modify/apply/:improvementId:
+    post:
+      operationId: applyModification
+      tags: [self-modify]
+      summary: Apply
+      responses:
+        "200":
+          description: Applied
+  /self-modify/rollback/:modificationId:
+    post:
+      operationId: rollbackModification
+      tags: [self-modify]
+      summary: Rollback
+      responses:
+        "200":
+          description: Rolled back
+  /self-modify/genome:
+    get:
+      operationId: getGenomeV2
+      tags: [self-modify]
+      summary: Get genome
+      responses:
+        "200":
+          description: Genome
+  /self-modify/dashboard:
+    get:
+      operationId: getSelfModifyDashboard
+      tags: [self-modify]
+      summary: Dashboard
+      responses:
+        "200":
+          description: Dashboard
 components:
   schemas:
     HealthStatus:

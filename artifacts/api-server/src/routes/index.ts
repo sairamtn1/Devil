@@ -27,6 +27,7 @@ import multimodalRouter from "./multimodal";
 import ventureRouter from "./venture";
 import ecosystemRouter from "./ecosystem";
 import collectiveRouter from "./collective";
+import selfModifyRouter from "./self-modify";
 
 const router: IRouter = Router();
 
@@ -64,8 +65,11 @@ router.use(ventureRouter);
 // Ecosystem Platform Routes
 router.use(ecosystemRouter);
 
-// Collective Intelligence Routes (Phase 21)
+// Collective Intelligence Routes
 router.use(collectiveRouter);
+
+// Self Modification Routes (Phase 22)
+router.use(selfModifyRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);
