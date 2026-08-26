@@ -30,6 +30,7 @@ import collectiveRouter from "./collective";
 import selfModifyRouter from "./self-modify";
 import simulationRouter from "./simulation";
 import enterpriseRouter from "./enterprise";
+import volgaRouter from "./volga";
 
 const router: IRouter = Router();
 
@@ -76,8 +77,11 @@ router.use(selfModifyRouter);
 // World Simulation Routes
 router.use(simulationRouter);
 
-// Enterprise Command Center Routes (Phase 24)
+// Enterprise Command Center Routes
 router.use(enterpriseRouter);
+
+// VOLGA OS Routes (Phase 25 - v1.0 Launch)
+router.use(volgaRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);

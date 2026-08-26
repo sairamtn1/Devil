@@ -1,14 +1,23 @@
 openapi: 3.1.0
 info:
-  title: DEVIL API
-  version: 24.0.0
+  title: VOLGA OS API
+  version: 1.0.0
   description: |
-    DEVIL AI Agent Platform API
+    VOLGA OS v1.0 - Unified AI Operating System
     
-    Phase 1-23: Core systems (Simulation, Self-Modification, etc.)
-    Phase 24: Enterprise Command Center - Organization, Workspace, RBAC, Audit, Governance
+    The next generation of intelligent operations platform.
+    Previously known as DEVIL AI Agent.
+    
+    VOLGA OS unifies:
+    - Control Plane & Executor
+    - Brain & Intelligence
+    - Memory & Knowledge
+    - Evolution & Self-Modification
+    - Simulation & Prediction
+    - Enterprise & Governance
+    - Collective Intelligence
   contact:
-    name: DEVIL Team
+    name: VOLGA OS Team
 servers:
   - url: /api
     description: Base API path
@@ -81,6 +90,8 @@ tags:
     description: World Simulation - Mission/Business Simulators, Scenario Generator, Decision Support
   - name: enterprise
     description: Enterprise Command Center - Organizations, Workspaces, Teams, RBAC, Audit, Governance
+  - name: volga
+    description: VOLGA OS v1.0 - Unified AI Operating System, Mission Center, Health, Readiness
 paths:
   /healthz:
     get:
@@ -4608,6 +4619,71 @@ paths:
       operationId: getEnterpriseDashboard
       tags: [enterprise]
       summary: Dashboard
+      responses:
+        "200":
+          description: Dashboard
+  # VOLGA OS v1.0 API
+  /os/status:
+    get:
+      operationId: getVolgaStatus
+      tags: [volga]
+      summary: VOLGA OS status
+      responses:
+        "200":
+          description: System status
+  /os/health:
+    get:
+      operationId: getVolgaHealth
+      tags: [volga]
+      summary: Health report
+      responses:
+        "200":
+          description: Health report
+  /os/readiness:
+    get:
+      operationId: getLaunchReadiness
+      tags: [volga]
+      summary: Launch readiness
+      responses:
+        "200":
+          description: Readiness report
+  /os/launch-check:
+    post:
+      operationId: launchSystem
+      tags: [volga]
+      summary: Launch check
+      responses:
+        "200":
+          description: Launch result
+  /os/agents:
+    get:
+      operationId: getAgents
+      tags: [volga]
+      summary: Agent registry
+      responses:
+        "200":
+          description: Agents list
+  /os/mission:
+    post:
+      operationId: createMission
+      tags: [volga]
+      summary: Create mission
+      responses:
+        "201":
+          description: Mission created
+  /os/missions:
+    get:
+      operationId: getMissions
+      tags: [volga]
+      summary: List missions
+      responses:
+        "200":
+          description: Missions list
+  /os/dashboard:
+    get:
+      operationId: getVolgaDashboard
+      tags: [volga]
+      summary: Unified dashboard
       responses:
         "200":
           description: Dashboard
