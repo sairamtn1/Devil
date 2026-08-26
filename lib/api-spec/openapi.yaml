@@ -1,21 +1,18 @@
 openapi: 3.1.0
 info:
   title: VOLGA OS API
-  version: 1.0.0
+  version: 1.1.0
   description: |
-    VOLGA OS v1.0 - Unified AI Operating System
+    VOLGA OS v1.1 - Self-Expanding Ecosystem
     
     The next generation of intelligent operations platform.
-    Previously known as DEVIL AI Agent.
     
-    VOLGA OS unifies:
-    - Control Plane & Executor
-    - Brain & Intelligence
-    - Memory & Knowledge
-    - Evolution & Self-Modification
-    - Simulation & Prediction
-    - Enterprise & Governance
-    - Collective Intelligence
+    Phase 26: Agent Factory & Ecosystem Extension
+    - Agent Factory: Create new agents dynamically
+    - Plugin Marketplace: Extend functionality
+    - Voice Layer: Voice commands and control
+    - Real-Time Monitoring: System monitoring
+    - Multi-Device Sync: Cross-device synchronization
   contact:
     name: VOLGA OS Team
 servers:
@@ -92,6 +89,8 @@ tags:
     description: Enterprise Command Center - Organizations, Workspaces, Teams, RBAC, Audit, Governance
   - name: volga
     description: VOLGA OS v1.0 - Unified AI Operating System, Mission Center, Health, Readiness
+  - name: factory
+    description: Agent Factory - Templates, Custom Agents, Plugins, Workflows, Voice, Monitoring, Devices
 paths:
   /healthz:
     get:
@@ -4684,6 +4683,71 @@ paths:
       operationId: getVolgaDashboard
       tags: [volga]
       summary: Unified dashboard
+      responses:
+        "200":
+          description: Dashboard
+  # Agent Factory API
+  /factory/templates:
+    get:
+      operationId: getAgentTemplates
+      tags: [factory]
+      summary: Get agent templates
+      responses:
+        "200":
+          description: Templates
+  /factory/agent:
+    post:
+      operationId: createAgent
+      tags: [factory]
+      summary: Create agent
+      responses:
+        "201":
+          description: Created
+  /factory/plugins:
+    get:
+      operationId: getPlugins
+      tags: [factory]
+      summary: Get plugins
+      responses:
+        "200":
+          description: Plugins
+  /factory/workflows:
+    get:
+      operationId: getWorkflows
+      tags: [factory]
+      summary: Get workflows
+      responses:
+        "200":
+          description: Workflows
+  /factory/voice:
+    post:
+      operationId: processVoiceCommand
+      tags: [factory]
+      summary: Voice command
+      responses:
+        "201":
+          description: Processed
+  /factory/monitoring:
+    get:
+      operationId: getMonitoring
+      tags: [factory]
+      summary: Get monitoring
+      responses:
+        "200":
+          description: Monitoring
+  /factory/devices:
+    get:
+      operationId: getDevices
+      tags: [factory]
+      summary: Get devices
+      responses:
+        "200":
+          description: Devices
+  /factory/dashboard:
+    get:
+      operationId: getFactoryDashboard
+      tags: [factory]
+      summary: Factory dashboard
       responses:
         "200":
           description: Dashboard
