@@ -26,6 +26,7 @@ import evolutionPlusRouter from "./evolution/evolution-plus";
 import multimodalRouter from "./multimodal";
 import ventureRouter from "./venture";
 import ecosystemRouter from "./ecosystem";
+import collectiveRouter from "./collective";
 
 const router: IRouter = Router();
 
@@ -51,7 +52,7 @@ router.use(worldmodelRouter);
 // Self-Evolution Routes
 router.use(evolutionRouter);
 
-// Autonomous Evolution Routes (Phase 20)
+// Autonomous Evolution Routes
 router.use(evolutionPlusRouter);
 
 // Multimodal Cognitive Routes
@@ -62,6 +63,9 @@ router.use(ventureRouter);
 
 // Ecosystem Platform Routes
 router.use(ecosystemRouter);
+
+// Collective Intelligence Routes (Phase 21)
+router.use(collectiveRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);

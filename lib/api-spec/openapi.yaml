@@ -1,30 +1,12 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 20.0.0
+  version: 21.0.0
   description: |
     DEVIL AI Agent Platform API
     
-    Phase 1: Control Plane - Mission State Machine, Event Log, Approval Engine, Validation Layer, Tool Registry
-    Phase 2: Executor Foundation - Execution Engine, Sandbox, Recovery, Dry Run, Step-by-Step, Auto Pilot
-    Phase 3: Coding Agent Foundation - Workspace Manager, Code Generator, Build/Test/Lint Runners, Diff Engine, Code Review
-    Phase 4: GitHub Agent - Repository Analyzer, Branch Manager, Commit Manager, PR Manager, Audit Trail
-    Phase 5: Deployment Agent - Deployment Manager, Providers, Health System, Rollback Engine, Validation Pipeline
-    Phase 6: Memory System - User/Project/Mission/Repository/Execution/Knowledge Memory, Retrieval, Search
-    Phase 7: Architect 2.0 - Goal Analysis, Complexity Engine, Risk Engine, Timeline Engine, Stack Recommendation, Adaptive Planner
-    Phase 8: Orchestrator - Agent Registry, Mission Router, Task Dispatcher, Dependency Coordinator, Workflow Engine, GOD/DEVIL Modes
-    Phase 9: Image Studio - Image Generation, Logo Design, Brand System, Asset Library, Provider Abstraction
-    Phase 10: Video Studio - Video Generation, Storyboard Engine, Commercial Templates, Provider Abstraction
-    Phase 11: DEVIL Brain - Central Intelligence Core, Mission Analysis, Model Router, Reasoning Engine, Context Builder, Decision Center
-    Phase 12: Autonomous Operations Center - Swarm Formation, Parallel Execution, Self-Healing, Continuous Optimization, Mission Replay, DEVIL Command Language
-    Phase 13: Digital Workforce Platform - Departments, Workers, Recruitment, Performance Reviews, Skill Evolution, Analytics
-    Phase 14: Research & Innovation Lab - Hypothesis Engine, Experimentation, Knowledge Acquisition, Benchmarking, IP Management, Breakthrough Detection
-    Phase 15: World Model & Strategic Intelligence - Environment Mapping, Forecasting, Opportunity Detection, Risk Intelligence, Scenario Simulation, Knowledge Graph
-    Phase 16: Self-Evolution & Meta-Optimization - Self Analysis, Architecture Optimization, Agent Evolution, Capability Gaps, Simulation Sandbox, Meta Learning
-    Phase 17: Unified Multimodal Cognitive Engine - Cross-Modal Reasoning, Semantic Fusion, Visual Intelligence, Cognitive Graph, Multimodal Memory, Understanding Score
-    Phase 18: Autonomous Venture Factory - Opportunity Discovery, Venture Creation, Product Factory, Growth Engine, Portfolio Management, Business Intelligence
-    Phase 19: Ecosystem & Marketplace Platform - Plugin Marketplace, Agent Marketplace, Workflow Marketplace, Template System, Developer Platform, Governance, Revenue Layer
-    Phase 20: Autonomous Evolution & Self-Improvement - Learning Engine, Capability Analyzer, Weakness Detector, Strategy Engine, Experiments, DEVIL Genome, Evolution Score
+    Phase 1-20: Core agents and systems (Control Plane, Executor, Brain, Memory, Research, Knowledge, Evolution, Marketplace, Architect, Coding, Image, Video, Deployment, GitHub, etc.)
+    Phase 21: Collective Intelligence Platform - Unified collective intelligence connecting all agents for shared learning, knowledge propagation, collaboration, consensus, and unified behavior.
   contact:
     name: DEVIL Team
 servers:
@@ -91,6 +73,8 @@ tags:
     description: Venture Factory - Opportunity Discovery, Ventures, Products, Portfolio, Growth
   - name: ecosystem
     description: Ecosystem Platform - Marketplace, Developers, Assets, Integrations, Governance
+  - name: collective
+    description: Collective Intelligence - Agent Network, Shared Knowledge, Cross-Agent Learning, Consensus, Reputation
 paths:
   /healthz:
     get:
@@ -4004,6 +3988,184 @@ paths:
       operationId: listMemories
       tags: [memory]
       summary: List and search memories
+  # Phase 21: Collective Intelligence Paths
+  /collective/agents:
+    get:
+      operationId: getAgents
+      tags: [collective]
+      summary: Get all agents
+      responses:
+        "200":
+          description: Agent list
+  /collective/agent:
+    post:
+      operationId: registerAgent
+      tags: [collective]
+      summary: Register agent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                skills:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "201":
+          description: Agent registered
+  /collective/skills:
+    get:
+      operationId: getSkills
+      tags: [collective]
+      summary: Get skill graph
+      responses:
+        "200":
+          description: Skill list
+  /collective/knowledge:
+    get:
+      operationId: getKnowledge
+      tags: [collective]
+      summary: Get knowledge
+    post:
+      operationId: publishKnowledge
+      tags: [collective]
+      summary: Publish knowledge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Knowledge published
+  /collective/learn:
+    post:
+      operationId: propagateLearning
+      tags: [collective]
+      summary: Cross-agent learning
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Learning propagated
+  /collective/collaborate:
+    post:
+      operationId: initiateCollaboration
+      tags: [collective]
+      summary: Initiate collaboration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Collaboration initiated
+  /collective/consensus:
+    get:
+      operationId: getConsensus
+      tags: [collective]
+      summary: Get consensus decisions
+    post:
+      operationId: initiateConsensus
+      tags: [collective]
+      summary: Initiate consensus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Consensus initiated
+  /collective/reputation:
+    get:
+      operationId: getReputations
+      tags: [collective]
+      summary: Get reputations
+    patch:
+      operationId: updateReputation
+      tags: [collective]
+      summary: Update reputation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Reputation updated
+  /collective/memory:
+    get:
+      operationId: getCollectiveMemory
+      tags: [collective]
+      summary: Get collective memory
+    post:
+      operationId: storeInMemory
+      tags: [collective]
+      summary: Store in memory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Memory stored
+  /collective/exchange:
+    post:
+      operationId: initiateExchange
+      tags: [collective]
+      summary: Initiate exchange
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Exchange initiated
+  /collective/discover:
+    get:
+      operationId: discoverOpportunities
+      tags: [collective]
+      summary: Discover opportunities
+      responses:
+        "200":
+          description: Opportunities found
+  /collective/network:
+    get:
+      operationId: getNetworkStats
+      tags: [collective]
+      summary: Get network stats
+      responses:
+        "200":
+          description: Network statistics
+  /collective/dashboard:
+    get:
+      operationId: getDashboard
+      tags: [collective]
+      summary: Get collective dashboard
+      responses:
+        "200":
+          description: Dashboard data
       parameters:
         - name: type
           in: query
