@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DEVIL API
-  version: 16.0.0
+  version: 17.0.0
   description: |
     DEVIL AI Agent Platform API
     
@@ -21,6 +21,7 @@ info:
     Phase 14: Research & Innovation Lab - Hypothesis Engine, Experimentation, Knowledge Acquisition, Benchmarking, IP Management, Breakthrough Detection
     Phase 15: World Model & Strategic Intelligence - Environment Mapping, Forecasting, Opportunity Detection, Risk Intelligence, Scenario Simulation, Knowledge Graph
     Phase 16: Self-Evolution & Meta-Optimization - Self Analysis, Architecture Optimization, Agent Evolution, Capability Gaps, Simulation Sandbox, Meta Learning
+    Phase 17: Unified Multimodal Cognitive Engine - Cross-Modal Reasoning, Semantic Fusion, Visual Intelligence, Cognitive Graph, Multimodal Memory, Understanding Score
   contact:
     name: DEVIL Team
 servers:
@@ -79,6 +80,8 @@ tags:
     description: World Model & Strategic Intelligence - Forecasting, Opportunities, Risks, Scenarios
   - name: evolution
     description: Self-Evolution & Meta-Optimization - Self Analysis, Optimization, Capability Growth
+  - name: multimodal
+    description: Unified Multimodal Cognitive - Cross-Modal Reasoning, Semantic Fusion, Cognitive Graph
 paths:
   /healthz:
     get:
@@ -3484,6 +3487,135 @@ paths:
       responses:
         "200":
           description: Full report
+  # Phase 17: Multimodal Cognitive Paths
+  /cognitive/graph:
+    get:
+      operationId: getCognitiveGraph
+      tags: [multimodal]
+      summary: Get cognitive graph
+      responses:
+        "200":
+          description: Cognitive graph
+  /cognitive/graph/node:
+    post:
+      operationId: addGraphNode
+      tags: [multimodal]
+      summary: Add node to graph
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                label:
+                  type: string
+                type:
+                  type: string
+      responses:
+        "201":
+          description: Node added
+  /cognitive/knowledge:
+    post:
+      operationId: createUnifiedKnowledge
+      tags: [multimodal]
+      summary: Create unified knowledge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                concept:
+                  type: string
+                definition:
+                  type: string
+      responses:
+        "201":
+          description: Knowledge created
+    get:
+      operationId: getUnifiedKnowledge
+      tags: [multimodal]
+      summary: Get unified knowledge
+      responses:
+        "200":
+          description: Knowledge list
+  /cognitive/analyze:
+    post:
+      operationId: analyzeCrossModal
+      tags: [multimodal]
+      summary: Analyze cross-modal content
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                code:
+                  type: string
+                image:
+                  type: string
+                video:
+                  type: string
+      responses:
+        "201":
+          description: Analysis complete
+  /cognitive/consistency:
+    get:
+      operationId: checkConsistency
+      tags: [multimodal]
+      summary: Check consistency
+      responses:
+        "200":
+          description: Consistency report
+  /cognitive/understanding:
+    post:
+      operationId: calculateUnderstanding
+      tags: [multimodal]
+      summary: Calculate understanding score
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                modality:
+                  type: string
+      responses:
+        "201":
+          description: Score calculated
+  /cognitive/simulate:
+    post:
+      operationId: simulateOutcome
+      tags: [multimodal]
+      summary: Simulate outcome
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                code:
+                  type: string
+      responses:
+        "200":
+          description: Simulation result
+  /cognitive/metrics:
+    get:
+      operationId: getMultimodalMetrics
+      tags: [multimodal]
+      summary: Get multimodal metrics
+      responses:
+        "200":
+          description: Metrics
   # Phase 6: Memory System Paths
   /memory:
     get:

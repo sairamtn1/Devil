@@ -22,6 +22,7 @@ import workforceRouter from "./workforce";
 import researchRouter from "./research";
 import worldmodelRouter from "./worldmodel";
 import evolutionRouter from "./evolution";
+import multimodalRouter from "./multimodal";
 
 const router: IRouter = Router();
 
@@ -46,6 +47,9 @@ router.use(worldmodelRouter);
 
 // Self-Evolution Routes
 router.use(evolutionRouter);
+
+// Multimodal Cognitive Routes
+router.use(multimodalRouter);
 
 // Architect 2.0 Routes
 router.use(architectRouter);
